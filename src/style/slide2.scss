@@ -1,0 +1,199 @@
+.slide2 {
+  padding: 60px 40px;
+  position: relative;
+  overflow: hidden;
+  max-width: 1200px;
+  margin: auto;
+
+  h1 {
+    text-align: center;
+    font-size: 35px;
+    color: #0a2942;
+    margin-bottom: 40px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+  }
+
+  &-main-img {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.2);
+    border: 5px solid #fff;
+    transition: transform 0.3s ease;
+
+    img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+  }
+
+  &-content {
+
+    .doctor-title {
+      display: inline-block;
+      font-size: 16px;
+      color: #0052b3;
+      background: rgba(10, 79, 140, 0.1);
+      padding: 8px 20px;
+      border-radius: 30px;
+      margin-bottom: 20px;
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+
+    .doctor-name {
+      font-size: 32px;
+      color: #0a2942;
+      margin-bottom: 15px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .doctor-school {
+      font-size: 16px;
+      color: #64748b;
+      margin-bottom: 25px;
+      font-weight: 500;
+      padding-bottom: 15px;
+      border-bottom: 2px dashed #e2e8f0;
+    }
+
+    .doctor-desc-box {
+      p {
+        color: #334155;
+        font-size: 16px;
+        line-height: 1.8;
+        margin-bottom: 15px;
+        text-align: justify;
+
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  &-thumbnails {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 50px;
+    flex-wrap: wrap;
+
+    .thumb {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      overflow: hidden;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(10, 64, 140, 0.3);
+      }
+
+      &.active {
+        border-color: #0052b3;
+        transform: scale(1.1);
+        box-shadow: 0 10px 25px rgba(10, 77, 140, 0.4);
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .slide2 {
+    padding: 40px 20px;
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 30px;
+    }
+
+    &-main-img {
+      max-width: 300px;
+      margin-bottom: 30px;
+    }
+
+    &-content {
+      padding: 10px;
+      text-align: center;
+
+      .doctor-title {
+        font-size: 14px;
+      }
+
+      .doctor-name {
+        font-size: 26px;
+      }
+
+      .doctor-school {
+        font-size: 14px;
+      }
+
+      .doctor-desc-box p {
+        font-size: 15px;
+        text-align: left;
+      }
+    }
+
+    &-thumbnails {
+      gap: 15px;
+      margin-top: 35px;
+
+      .thumb {
+        width: 60px;
+        height: 60px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .slide2 {
+    padding: 30px 15px;
+
+    h1 {
+      font-size: 24px;
+    }
+
+    &-main-img {
+      max-width: 250px;
+    }
+
+    &-content .doctor-name {
+      font-size: 22px;
+    }
+
+    &-thumbnails {
+      gap: 10px;
+
+      .thumb {
+        width: 50px;
+        height: 50px;
+      }
+    }
+  }
+}

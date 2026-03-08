@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import ButtonCustom from "../../components/custom/button";
-import { useTranslation } from "react-i18next";
 import { message } from "antd";
 import { authLogin } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
@@ -16,12 +15,11 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
   const [gmail, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleLogin = async () => {
     if (!gmail || !password) {
-      message.warning("Please enter email and password");
+      message.warning("Vui lòng nhập email hoặc mật khẩu");
       return;
     }
 
@@ -33,7 +31,7 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
       });
 
       if (loginRes.satus !== 200) {
-        message.error(loginRes.message || "Login failed");
+        message.error(loginRes.message || "Đăng nhập thất bại");
         return;
       }
 
@@ -48,7 +46,7 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
           JSON.stringify(profileRes.data)
         );
       }
-      message.success("Login success");
+      message.success("Đăng nhập thành công");
       if (router) {
         navigate(`/admin`);
       } else {
@@ -58,7 +56,7 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
 
     } catch (error: any) {
       message.error(
-        error?.response?.data?.message || "Login failed"
+        error?.response?.data?.message || "Đăng nhập thất bại"
       );
     } finally {
       setLoading(false);
@@ -67,12 +65,12 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
 
   return (
     <div className="auth auth--login">
-      <h2 className="auth__title">{t("Login")}</h2>
+      <h2 className="auth__title">ĐĂNG NHẬP</h2>
 
       <div className="auth__field">
         <input
           type="email"
-          placeholder={t("Email") as string}
+          placeholder="Email"
           value={gmail}
           onChange={(e) => setUsername(e.target.value)}
         />
@@ -81,23 +79,23 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
       <div className="auth__field">
         <input
           type="password"
-          placeholder={t("PassWord") as string}
+          placeholder="Mật khẩu"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
 
       <ButtonCustom
-        text={t("Login")}
+        text="Đăng nhập"
         onClick={handleLogin}
         disabled={loading}
         className="auth__btn"
       />
 
       <div className="auth__footer">
-        <span>{t("Don’t have an account?")}</span>
+        <span>Bạn chưa có tài khoản?</span>
         <span className="auth__link" onClick={onRegister}>
-          {t("Register")}
+          Đăng kí
         </span>
       </div>
     </div>

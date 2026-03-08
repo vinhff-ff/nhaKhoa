@@ -17,6 +17,10 @@
 }
 
 @import './header.scss';
+@import './footer.scss';
+
+
+@import './mainLayout.scss';
 @import './btnCustom.scss';
 @import './login.scss';
 @import './cardUser.scss';
@@ -32,7 +36,12 @@
 @import './select.scss';
 @import './add-acc.scss';
 @import './table.scss';
-@import './allTicket.scss';
 @import './profile.scss';
 @import './mycart.scss';
 @import './myticket.scss';
+
+@import './slide1.scss';
+@import './slide2.scss';
+@import './slide3.scss';
+@import './slide4.scss';
+@import './slide5.scss';

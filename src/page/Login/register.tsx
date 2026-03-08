@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import ButtonCustom from "../../components/custom/button";
-import { useTranslation } from "react-i18next";
 import { authRegister } from "../../api/auth";
 import { message } from "antd";
 
@@ -14,14 +13,13 @@ const Register: React.FC<RegisterProps> = ({
   onBackToLogin,
 }) => {
   const [username, setUsername] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { t } = useTranslation();
-
   const handleRegister = async () => {
-    if (!username || !password || !confirmPassword) {
+    if (!username || !phone || !password || !confirmPassword) {
       message.warning("Vui lòng nhập đầy đủ thông tin");
       return;
     }
@@ -35,15 +33,16 @@ const Register: React.FC<RegisterProps> = ({
       setLoading(true);
 
       const body = {
-        gmail: username,  
+        gmail: username,
+        phone: phone,
         password: password,
       };
 
-      const res = await authRegister(body);
+      await authRegister(body);
 
-      message.success("Đăng kí thành công")
-
+      message.success("Đăng kí thành công");
       onRegisterSuccess();
+
     } catch (error: any) {
       message.warning(error?.response?.data?.message || "Đăng ký thất bại");
     } finally {
@@ -53,46 +52,51 @@ const Register: React.FC<RegisterProps> = ({
 
   return (
     <div className="auth auth--register">
-      <h2 className="auth__title">{t("Register")}</h2>
-
+      <h2 className="auth__title">ĐĂNG KÍ</h2>
       <div className="auth__field">
         <input
           type="email"
-          placeholder={t("Email") as string}
+          placeholder="Email"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
       </div>
-
+      <div className="auth__field">
+        <input
+          type="text"
+          placeholder="Số điện thoại"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+        />
+      </div>
       <div className="auth__field">
         <input
           type="password"
-          placeholder={t("PassWord") as string}
+          placeholder="Mật khẩu"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-
       <div className="auth__field">
         <input
           type="password"
-          placeholder={t("Confirm password") as string}
+          placeholder="Xác nhận mật khẩu"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
       </div>
 
       <ButtonCustom
-        text={loading ? "Loading..." : (t("Register") as string)}
+        text={(loading ? "Loading..." : "Đăng kí" as string)}
         onClick={handleRegister}
         disabled={loading}
         className="auth__btn"
       />
 
       <div className="auth__footer">
-        <span>{t("Already have an account?")}</span>
+        <span>Bạn đã có tài khoản?</span>
         <span className="auth__link" onClick={onBackToLogin}>
-          {t("Login")}
+          Đăng nhập
         </span>
       </div>
     </div>

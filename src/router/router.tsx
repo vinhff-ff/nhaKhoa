@@ -9,8 +9,8 @@ import BaseUrl from "./path";
 import MainLayout from "../components/layout/mainLayout";
 import MainLayoutAdmin from "../admin/layout";
 
+const HomePage = lazy(() => import("../page/TrangChu/index"));
 const Login = lazy(() => import("../page/Login/index"));
-const Home = lazy(() => import("../page/AllTicket/index"));
 const DetailsVe = lazy(() => import("../page/DetailsVe/index"));
 const HomeAdmin = lazy(() => import("../admin/page/home"));
 const QuanLiNhanVien = lazy(() => import("../admin/page/taiKhoanVaPhanQuyen"));
@@ -32,11 +32,10 @@ const routes = [
   {
     name: "Trang chủ",
     path: BaseUrl.Home,
-    component: Home,
+    component: HomePage,
     layout: MainLayout,
     showInMenu: true,
     private: false,
-    icon: <HomeOutlined />,
   },
   {
     name: "Đơn hàng của tôi",
@@ -65,42 +64,6 @@ const routes = [
     private: false,
     icon: <IdcardOutlined />,
   },
-  // {
-  //   name: "Danh sách yêu thích",
-  //   path: "/favorite",
-  //   component: Home,
-  //   layout: MainLayout,
-  //   showInMenu: true,
-  //   private: false,
-  //   icon: <HeartOutlined />,
-  // },
-  // {
-  //   name: "Cài đặt",
-  //   path: "/setting",
-  //   component: Home,
-  //   layout: MainLayout,
-  //   showInMenu: true,
-  //   private: false,
-  //   icon: <SettingOutlined />,
-  // },
-  // {
-  //   name: "Đánh giá dịch vụ",
-  //   path: "/rating",
-  //   component: Home,
-  //   layout: MainLayout,
-  //   showInMenu: true,
-  //   private: false,
-  //   icon: <StarOutlined />,
-  // },
-  // {
-  //   name: "Khoảnh khắc du lịch",
-  //   path: "/moment",
-  //   component: Home,
-  //   layout: MainLayout,
-  //   showInMenu: true,
-  //   private: false,
-  //   icon: <CameraOutlined />,
-  // },
   {
     name: "Chi tiết vé",
     path: BaseUrl.DetailVe,

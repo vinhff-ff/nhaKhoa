@@ -1,7 +1,6 @@
 import React, { Suspense } from "react";
 import "./index.css";
 import "./style/index.scss";
-import "./locales/i18n";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import routes from "./router/router";
 import NProgressHandler from "./components/custom/NProgress";
