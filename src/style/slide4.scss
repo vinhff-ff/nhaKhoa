@@ -1,5 +1,6 @@
 .slide4 {
     padding: 60px 40px;
+    background: #0a2942;
 
     .slide4-container {
         max-width: 1200px;
@@ -10,7 +11,7 @@
     .slide4-title {
         text-align: center;
         font-size: 35px;
-        color: #0a2942;
+        color: #F5F5F5;
         margin-bottom: 20px;
         font-weight: 600;
         text-transform: uppercase;
@@ -21,7 +22,7 @@
     .slide4-desc {
         max-width: 850px;
         margin: auto;
-        color: #555;
+        color: #c5bfbf;
         line-height: 1.6;
         margin-bottom: 40px;
     }
@@ -42,12 +43,12 @@
 
     .slide4-card {
         background: white;
-        border-radius: 5px;
+        border-radius: 20px;
         overflow: hidden;
         transition: 0.3s;
 
         &:hover {
-            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 8px rgba(255, 255, 255, 0.1);
         }
 
         .card-img {

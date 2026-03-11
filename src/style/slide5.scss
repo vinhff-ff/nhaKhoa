@@ -3,11 +3,10 @@
     max-width: 1000px;
     margin: auto;
 
-
     h1 {
         text-align: center;
         font-size: 35px;
-        color: #fff;
+        color: #0a2942;
         margin-bottom: 40px;
         font-weight: 600;
         text-transform: uppercase;
@@ -43,7 +42,7 @@
         padding: 20px 24px;
         border-radius: 14px;
         position: relative;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         max-width: 700px;
 
         &:before {

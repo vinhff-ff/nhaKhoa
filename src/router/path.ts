@@ -4,9 +4,11 @@ const BaseUrl = {
   DetailVe: `details/:id`,
   Profile: `profile`,
   Login: `/login`,
-  Oder: `/orders`,
+  OrderKham: `/order-lich-kham`,
   MyTicket:`/myticket`,
-  MyCart: `/my-cart`,
+  Contact: `/contact`,
+  Doctor:  `/doctor`,
+  GioiThieu: `/gioi-thieu`, 
   //admin
   HomeAdmin: `/admin`,
   QuanLiNhanVien: `/admin/tai-khoan-va-phan-quyen`,

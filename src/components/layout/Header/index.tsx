@@ -14,8 +14,6 @@ const HeaderCustom = () => {
   const token = localStorage.getItem("access_token");
 
   const [profile, setProfile] = useState<any>(null);
-  const [isOpenLogin, setIsOpenLogin] = useState(false);
-  const [isOpenRegister, setIsOpenRegister] = useState(false);
   const [isOpenUserDropdown, setIsOpenUserDropdown] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
 
@@ -28,7 +26,7 @@ const HeaderCustom = () => {
     if (storedProfile) {
       try {
         setProfile(JSON.parse(storedProfile));
-      } catch { }
+      } catch {}
     }
   }, [token]);
 
@@ -47,7 +45,6 @@ const HeaderCustom = () => {
   return (
     <>
       <header className="header">
-
         <div className="header-container">
 
           <div className="header-left">
@@ -63,20 +60,22 @@ const HeaderCustom = () => {
             />
           </div>
 
-          <div className="header-menu">
-            {menuRoutes.map((item) => (
-              <div
-                key={item.path}
-                className={`menu-item ${location.pathname === item.path ? "active" : ""
-                  }`}
-                onClick={() => navigate(item.path)}
-              >
-                <span>{item.name}</span>
-              </div>
-            ))}
-          </div>
-
           <div className="header-right">
+
+            <div className="header-menu">
+              {menuRoutes.map((item) => (
+                <div
+                  key={item.path}
+                  className={`menu-item ${
+                    location.pathname === item.path ? "active" : ""
+                  }`}
+                  onClick={() => navigate(item.path)}
+                >
+                  {item.name}
+                </div>
+              ))}
+            </div>
+
             <div className="user" ref={userRef}>
               {token ? (
                 <>
@@ -102,7 +101,7 @@ const HeaderCustom = () => {
                 <div className="active-btn-header">
                   <ButtonCustom
                     text="Đặt lịch khám"
-                    onClick={() => navigate("/login")}
+                    onClick={() => navigate("/order-lich-kham")}
                   />
                   <ButtonCustom
                     text="Đăng nhập"
@@ -111,10 +110,9 @@ const HeaderCustom = () => {
                 </div>
               )}
             </div>
+
           </div>
-
         </div>
-
       </header>
 
       <Drawer
@@ -128,8 +126,9 @@ const HeaderCustom = () => {
           {menuRoutes.map((item) => (
             <div
               key={item.path}
-              className={`drawer-item ${location.pathname === item.path ? "active" : ""
-                }`}
+              className={`drawer-item ${
+                location.pathname === item.path ? "active" : ""
+              }`}
               onClick={() => {
                 navigate(item.path);
                 setOpenDrawer(false);

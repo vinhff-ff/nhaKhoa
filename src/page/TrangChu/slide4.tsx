@@ -25,7 +25,7 @@ const Slide4 = () => {
       <div className="slide4-container">
 
         <h2 className="slide4-title">
-          CÁC PHƯƠNG PHÁP PHẪU THUẬT HIỆN ĐẠI
+          CÁC THIẾT BỊ PHẪU THUẬT HIỆN ĐẠI
         </h2>
 
         <p className="slide4-desc">

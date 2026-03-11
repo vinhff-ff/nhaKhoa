@@ -57,7 +57,7 @@ const Slide2 = () => {
 
   return (
     <div className="slide2">
-      <h1>Đội ngũ bác sĩ</h1>
+      {/* <h1>Đội ngũ bác sĩ</h1> */}
 
       <Row gutter={40} align="stretch">
 

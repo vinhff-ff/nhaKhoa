@@ -40,7 +40,7 @@ const Slide5 = () => {
     const [activePatient, setActivePatient] = useState(patients[0]);
 
     return (
-        <div style={{ background: "#0a2942" }}>
+        <div style={{ background: "#F5F5F5" }}>
             <div className="slide5">
                 <h1>Cảm nhận của bệnh nhân</h1>
 

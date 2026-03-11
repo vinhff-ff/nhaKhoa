@@ -11,14 +11,14 @@ import MainLayoutAdmin from "../admin/layout";
 
 const HomePage = lazy(() => import("../page/TrangChu/index"));
 const Login = lazy(() => import("../page/Login/index"));
-const DetailsVe = lazy(() => import("../page/DetailsVe/index"));
+const Doctor = lazy(() => import("../page/Doctor/index"));
 const HomeAdmin = lazy(() => import("../admin/page/home"));
 const QuanLiNhanVien = lazy(() => import("../admin/page/taiKhoanVaPhanQuyen"));
 const AddAccount = lazy(() => import("../admin/page/addAcc"));
 const Profile = lazy(() => import("../page/Profile/index"));
-const QuanLiDonHang = lazy(() => import("../page/QuanLiDonHang/index"));
-const MyTicket = lazy(() => import("../page/MyTicket/index"));
-const MyCart = lazy(() => import("../page/Cart/index"));
+const GioiThieu = lazy(() => import("../page/GioiThieu/index"));
+const OrderKham = lazy(() => import("../page/OrderKham/index"));
+const Contact = lazy(() => import("../page/Contact/index"));
 export interface AppRoute {
   name: string;
   path: string;
@@ -38,47 +38,35 @@ const routes = [
     private: false,
   },
   {
-    name: "Đơn hàng của tôi",
-    path: BaseUrl.Oder,
-    component: QuanLiDonHang,
+    name: "Bác sĩ",
+    path: BaseUrl.Doctor,
+    component: Doctor,
     layout: MainLayout,
     showInMenu: true,
-    private: false,
-    icon: <FileTextOutlined />,
-  },
-  {
-    name: "Giỏ hàng của tôi",
-    path: BaseUrl.MyCart,
-    component: MyCart,
-    layout: MainLayout,
-    showInMenu: true,
-    private: false,
-    icon: <ShoppingCartOutlined />,
-  },
-  {
-    name: "Vé của tôi",
-    path: BaseUrl.MyTicket,
-    component: MyTicket,
-    layout: MainLayout,
-    showInMenu: true,
-    private: false,
-    icon: <IdcardOutlined />,
-  },
-  {
-    name: "Chi tiết vé",
-    path: BaseUrl.DetailVe,
-    component: DetailsVe,
-    layout: MainLayout,
-    showInMenu: false,
     private: false,
     icon: null,
   },
   {
-    name: null,
-    path: BaseUrl.Profile,
-    component: Profile,
+    name: "Liên hệ",
+    path: BaseUrl.Contact,
+    component: Contact,
     layout: MainLayout,
-    showInMenu: false,
+    showInMenu: true,
+    private: false,
+  },
+  {
+    path: BaseUrl.OrderKham,
+    component: OrderKham,
+    layout: MainLayout,
+    showInMenu: true,
+    private: false,
+  },
+  {
+    name: "Giới thiệu",
+    path: BaseUrl.GioiThieu,
+    component: GioiThieu,
+    layout: MainLayout,
+    showInMenu: true,
     private: false,
     icon: null,
   },

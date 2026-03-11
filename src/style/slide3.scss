@@ -1,5 +1,4 @@
 .slide3 {
-    background: #0a2942;
     padding: 60px 40px;
 
     &-header {
@@ -8,7 +7,7 @@
         h2 {
             text-align: center;
             font-size: 35px;
-            color: #fff;
+            color: #0a2942;
             margin-bottom: 40px;
             font-weight: 600;
             text-transform: uppercase;
@@ -26,14 +25,14 @@
     .reason-card {
         text-align: center;
         padding: 25px;
-        background: white;
-        border-radius: 5px;
+        background: #0a2942;
+        border-radius: 20px;
         transition: all 0.3s ease;
         height: 100%;
         box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
 
         &:hover {
-            box-shadow: 0 1px 8px #757575;
+            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
         }
 
         .reason-icon {
@@ -45,13 +44,13 @@
         h3 {
             font-size: 18px;
             font-weight: 600;
-            color: #0a2942;
+            color: #e4e6ea;
             margin-bottom: 12px;
         }
 
         p {
             font-size: 14px;
-            color: #475569;
+            color: #b2bbc7;
             line-height: 1.6;
             text-align: justify;
         }

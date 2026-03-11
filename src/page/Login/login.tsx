@@ -91,8 +91,9 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
         disabled={loading}
         className="auth__btn"
       />
-
+      <p style={{ textAlign: 'end', fontSize: '14px', color:"#555", marginTop:'-12px' }}><span>Quên mật khẩu?</span></p>
       <div className="auth__footer">
+
         <span>Bạn chưa có tài khoản?</span>
         <span className="auth__link" onClick={onRegister}>
           Đăng kí

@@ -1,16 +1,17 @@
 .ant-select {
   height: 56px !important;
   padding: 0 20px !important;
-  border-radius: 100px !important;
+  border-radius: 5px !important;
   border: 1px solid #ddd !important;
   display: flex;
   align-items: center;
   font-size: 15px;
   transition: all 0.2s ease;
+  width: 100%;
 }
 
 .ant-select-focused .ant-select-selector {
-  border-color: #4C1D95 !important;
+  border-color: #0052b3 !important;
   box-shadow: none !important;
 }
 
@@ -25,12 +26,12 @@
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: #6c5ce7;
+    border-color: none !important;
   }
 
   &.ant-picker-focused {
-    border-color: #6c5ce7;
-    box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.2);
+    border-color: #0052b3;
+    box-shadow: none !important;
   }
 
   &.ant-picker-disabled {

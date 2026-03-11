@@ -1,0 +1,138 @@
+.contactContainer {
+  width: 100%;
+  padding: 60px 20px;
+}
+
+.contactWrapper {
+  max-width: 1150px;
+  margin: auto;
+  display: flex;
+  gap: 40px;
+}
+
+
+.contactMap {
+  flex: 1;
+  height: 500px;
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+  }
+}
+
+
+.contactForm {
+  flex: 1;
+
+  h2 {
+    margin-bottom: 25px;
+    font-size: 28px;
+    font-weight: 600;
+    color: #0052b3;
+  }
+}
+
+.formGroup {
+  margin-bottom: 15px;
+}
+
+.textArea {
+  width: 100%;
+  min-height: 120px;
+  border-radius: 5px;
+  border: 1px solid #e2e8f0;
+  padding: 10px;
+  font-size: 15px;
+  resize: none;
+
+  &:focus {
+    outline: none;
+    border-color: #2563eb;
+  }
+}
+
+
+.contactInfo {
+  margin-top: 25px;
+  display: flex;
+  gap: 15px;
+}
+
+.infoCard {
+  flex: 1;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  padding: 15px;
+  background: white;
+  border-radius: 5px;
+  border: 1px solid #e2e8f0;
+
+  .icon {
+    font-size: 22px;
+    color: #2563eb;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .contactWrapper {
+    flex-direction: column;
+  }
+
+  .contactMap {
+    height: 400px;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .contactContainer {
+    padding: 40px 15px;
+  }
+
+  .contactWrapper {
+    gap: 30px;
+  }
+
+  .contactMap {
+    height: 300px;
+  }
+
+  .contactForm h2 {
+    font-size: 22px;
+  }
+
+  .contactInfo {
+    flex-direction: column;
+  }
+
+  .infoCard {
+    padding: 12px;
+
+    .icon {
+      font-size: 20px;
+    }
+
+    h4 {
+      font-size: 14px;
+    }
+
+    p {
+      font-size: 13px;
+    }
+  }
+}
