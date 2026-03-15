@@ -18,7 +18,8 @@ const times = [
   { label: "10:00", value: "10:00" },
   { label: "13:30", value: "13:30" },
   { label: "15:00", value: "15:00" },
-  { label: "16:30", value: "16:30" },
+  { label: "16:00", value: "16:00" },
+  { label: "17:00", value: "17:00" },
 ];
 
 const OrderLichKham = () => {
@@ -30,58 +31,73 @@ const OrderLichKham = () => {
       <div className="overlay" />
 
       <div className="orderWrapper">
-        <BgWhiteBorder  className="whiteOverlayBox">
+        <BgWhiteBorder className="whiteOverlayBox">
           <div className="orderForm">
-            <h2>Đặt lịch khám</h2>
 
-            <div className="formRow">
-              <label>Họ và tên</label>
-              <InputCustom placeholder="Họ và tên" />
+            <div className="orderForm__header">
+              <h2>Đặt lịch khám</h2>
+              <p>Điền thông tin bên dưới, chúng tôi sẽ xác nhận lịch hẹn sớm nhất</p>
             </div>
 
-            <div className="formRow">
-              <label>Ngày tháng năm sinh</label>
-              <InputCustom type="date" />
+            <div className="orderForm__grid">
+
+              <div className="orderForm__col">
+                <div className="formRow">
+                  <label>Họ và tên</label>
+                  <InputCustom placeholder="Họ và tên" />
+                </div>
+
+                <div className="formRow">
+                  <label>Ngày tháng năm sinh</label>
+                  <InputCustom type="date" />
+                </div>
+
+                <div className="formRow">
+                  <label>Số điện thoại</label>
+                  <InputCustom placeholder="Số điện thoại" />
+                </div>
+
+                <div className="formRow">
+                  <label>Email</label>
+                  <InputCustom placeholder="Email" />
+                </div>
+
+                <div className="formRow">
+                  <label>Địa chỉ</label>
+                  <InputCustom placeholder="Địa chỉ" />
+                </div>
+              </div>
+
+              {/* COL RIGHT */}
+              <div className="orderForm__col">
+                <div className="formRow">
+                  <label>Ngày khám bệnh</label>
+                  <InputCustom type="date" />
+                </div>
+
+                <div className="formRow">
+                  <label>Chọn bác sĩ</label>
+                  <SelectCustom options={doctors} placeholder="Chọn bác sĩ" />
+                </div>
+
+                <div className="formRow">
+                  <label>Giờ khám</label>
+                  <SelectCustom options={times} placeholder="Chọn giờ khám" />
+                </div>
+
+                <div className="formRow textareaRow">
+                  <label>Vấn đề mắt đang gặp phải</label>
+                  <textarea placeholder="Mô tả vấn đề mắt..." />
+                </div>
+              </div>
+
             </div>
 
-            <div className="formRow">
-              <label>Số điện thoại</label>
-              <InputCustom placeholder="Số điện thoại" />
-            </div>
-
-            <div className="formRow">
-              <label>Địa chỉ</label>
-              <InputCustom placeholder="Địa chỉ" />
-            </div>
-
-            <div className="formRow">
-              <label>Ngày khám bệnh</label>
-              <InputCustom type="date" />
-            </div>
-
-            <div className="formRow">
-              <label>Chọn bác sĩ</label>
-              <SelectCustom options={doctors} placeholder="Chọn bác sĩ" />
-            </div>
-
-            <div className="formRow">
-              <label>Giờ khám</label>
-              <SelectCustom options={times} placeholder="Chọn giờ khám" />
-            </div>
-
-            <div className="formRow">
-              <label>Email</label>
-              <InputCustom placeholder="Email" />
-            </div>
-
-            <div className="formRow textareaRow">
-              <label>Vấn đề mắt đang gặp phải</label>
-              <textarea placeholder="Mô tả vấn đề mắt..." />
-            </div>
-
+            {/* ── Submit ── */}
             <div className="btnBox">
               <ButtonCustom text="Đặt lịch khám" />
             </div>
+
           </div>
         </BgWhiteBorder>
       </div>

@@ -1,4 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap');
+
 .slide2 {
+  font-family: 'Be Vietnam Pro', sans-serif;
   padding: 60px 40px;
   position: relative;
   overflow: hidden;
@@ -6,6 +9,7 @@
   margin: auto;
 
   h1 {
+    font-family: 'Lora', serif;
     text-align: center;
     font-size: 35px;
     color: #0a2942;
@@ -37,6 +41,7 @@
   &-content {
 
     .doctor-title {
+      font-family: 'Be Vietnam Pro', sans-serif;
       display: inline-block;
       font-size: 16px;
       color: #0052b3;
@@ -49,14 +54,16 @@
     }
 
     .doctor-name {
+      font-family: 'Lora', serif;
       font-size: 32px;
       color: #0a2942;
       margin-bottom: 15px;
-      font-weight: 700;
+      font-weight: 600;
       line-height: 1.2;
     }
 
     .doctor-school {
+      font-family: 'Be Vietnam Pro', sans-serif;
       font-size: 16px;
       color: #64748b;
       margin-bottom: 25px;
@@ -67,6 +74,7 @@
 
     .doctor-desc-box {
       p {
+        font-family: 'Be Vietnam Pro', sans-serif;
         color: #334155;
         font-size: 16px;
         line-height: 1.8;

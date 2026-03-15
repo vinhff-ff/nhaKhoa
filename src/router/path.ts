@@ -1,17 +1,22 @@
 const BaseUrl = {
   //user
   Home: `/`,
-  DetailVe: `details/:id`,
   Profile: `profile`,
   Login: `/login`,
   OrderKham: `/order-lich-kham`,
-  MyTicket:`/myticket`,
   Contact: `/contact`,
-  Doctor:  `/doctor`,
-  GioiThieu: `/gioi-thieu`, 
+  Doctor: `/doctor`,
+  GioiThieu: `/gioi-thieu`,
+  ThietBi: `/thiet-bi/:id`,
+  MySche: `/lich-cua-toi`, 
   //admin
-  HomeAdmin: `/admin`,
-  QuanLiNhanVien: `/admin/tai-khoan-va-phan-quyen`,
-  AddAccount: `/admin/them-tai-khoan`
+  TrangChuAdmin: `/trang-chu-admin`,
+  CRUDBacSi: `/crud-bac-si`,
+  ContactInfor: `/admin-infor-contact`,
+  BannerAdmin: '/admin-banner',
+  //bác sĩ
+  BacSiLich: '/bac-si-quan-li-lich',
+  BacSiThongKe: '/bac-si-thong-ke',
+  
 };
 export default BaseUrl;
