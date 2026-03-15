@@ -1,0 +1,421 @@
+// ─────────────────────────────────────────────
+// GioiThieu.scss
+// Phòng khám mắt Tân Tây Đô — About page
+// Aesthetic: editorial medical · navy + gold + warm white
+// Font: Lora (serif) + Be Vietnam Pro
+// ─────────────────────────────────────────────
+
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap');
+
+// ── Tokens ────────────────────────────────────
+$navy:         #1a3a5c;
+$navy-dark:    #112845;
+$navy-light:   #254e7a;
+$navy-pale:    #d6e8f5;
+$accent:       #2e7d9c;
+$accent-pale:  #e0f2f9;
+$gold:         #c49a3c;
+$gold-pale:    #fdf6e3;
+$text-main:    #1c2b3a;
+$text-muted:   #5a6e7f;
+$text-light:   #8fa3b3;
+$bg-page:      #f4f6f8;
+$bg-white:     #ffffff;
+$bg-dark:      #0f2037;
+$border:       #dde5ec;
+$radius-md:    10px;
+$radius-lg:    16px;
+$shadow-sm:    0 2px 12px rgba(26, 58, 92, 0.08);
+$shadow-md:    0 6px 24px rgba(26, 58, 92, 0.13);
+
+// ── Base ─────────────────────────────────────
+.gt-page {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  color: $text-main;
+  background: $bg-page;
+}
+
+// ── Shared section label ──────────────────────
+.gt-section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: $gold;
+  margin-bottom: 12px;
+
+  &--light {
+    color: rgba($gold, 0.85);
+  }
+}
+
+// ═════════════════════════════════════════════
+// HERO
+// ═════════════════════════════════════════════
+.gt-hero {
+  position: relative;
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+
+  &__img-wrap {
+    position: absolute;
+    inset: 0;
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      160deg,
+      rgba($navy-dark, 0.78) 0%,
+      rgba($navy-dark, 0.55) 50%,
+      rgba($navy-dark, 0.72) 100%
+    );
+  }
+
+  &__content {
+    position: relative;
+    z-index: 2;
+    padding: 3rem 3rem 2rem;
+    max-width: 680px;
+  }
+
+  &__eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(#fff, 0.7);
+    margin-bottom: 14px;
+    padding: 4px 12px;
+    border: 1px solid rgba(#fff, 0.25);
+    border-radius: 20px;
+  }
+
+  &__title {
+    font-family: 'Lora', serif;
+    font-size: 48px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 16px;
+
+    em {
+      font-style: italic;
+      color: $gold;
+    }
+  }
+
+  &__tagline {
+    font-size: 16px;
+    font-weight: 300;
+    color: rgba(#fff, 0.82);
+    line-height: 1.65;
+    max-width: 480px;
+  }
+}
+
+// Stats strip
+.gt-stats {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  background: rgba($navy-dark, 0.88);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(#fff, 0.1);
+
+  &__item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 12px;
+    border-right: 1px solid rgba(#fff, 0.1);
+
+    &:last-child { border-right: none; }
+  }
+
+  &__value {
+    font-family: 'Lora', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: $gold;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  &__label {
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(#fff, 0.6);
+    text-align: center;
+    letter-spacing: 0.03em;
+  }
+}
+
+// ═════════════════════════════════════════════
+// INTRO
+// ═════════════════════════════════════════════
+.gt-intro {
+  padding: 5rem 3rem;
+  background: $bg-white;
+
+  &__inner {
+    max-width: 1060px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  &__heading {
+    font-family: 'Lora', serif;
+    font-size: 30px;
+    font-weight: 600;
+    color: $navy;
+    line-height: 1.35;
+    margin-bottom: 24px;
+  }
+
+  &__body {
+    font-size: 15px;
+    color: $text-muted;
+    line-height: 1.85;
+    font-weight: 300;
+    margin-bottom: 14px;
+    text-indent: 1.5em;
+
+    &:last-of-type { margin-bottom: 0; }
+  }
+
+  &__quote {
+    margin-top: 28px;
+    padding: 16px 20px;
+    border-left: 4px solid $gold;
+    background: $gold-pale;
+    border-radius: 0 $radius-md $radius-md 0;
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    font-style: italic;
+    color: $navy;
+    line-height: 1.6;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  &__quote-mark {
+    font-size: 32px;
+    line-height: 0.8;
+    color: $gold;
+    font-family: 'Lora', serif;
+    flex-shrink: 0;
+  }
+
+  // Image
+  &__img-wrap {
+    position: relative;
+  }
+
+  &__img {
+    width: 100%;
+    height: 440px;
+    object-fit: cover;
+    border-radius: $radius-lg;
+    display: block;
+    box-shadow: $shadow-md;
+  }
+
+  &__img-badge {
+    position: absolute;
+    bottom: -18px;
+    left: -18px;
+    background: $navy;
+    color: #fff;
+    border-radius: $radius-md;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: $shadow-md;
+    border: 3px solid $bg-white;
+  }
+
+  &__img-badge-year {
+    font-family: 'Lora', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: $gold;
+    line-height: 1;
+  }
+
+  &__img-badge-text {
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(#fff, 0.7);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+}
+
+// ═════════════════════════════════════════════
+// MISSION
+// ═════════════════════════════════════════════
+.gt-mission {
+  background: $bg-dark;
+  padding: 5rem 3rem;
+
+  &__inner {
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  &__heading {
+    font-family: 'Lora', serif;
+    font-size: 30px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.35;
+    margin-bottom: 24px;
+  }
+
+  &__body {
+    font-size: 15.5px;
+    color: rgba(#fff, 0.7);
+    line-height: 1.9;
+    font-weight: 300;
+  }
+}
+
+// ═════════════════════════════════════════════
+// HIGHLIGHTS
+// ═════════════════════════════════════════════
+.gt-highlights {
+  padding: 5rem 3rem;
+  max-width: 1060px;
+  margin: 0 auto;
+
+  &__heading {
+    font-family: 'Lora', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: $navy;
+    margin-bottom: 2.5rem;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+.gt-hl-card {
+  background: $bg-white;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  padding: 1.75rem 1.5rem;
+  box-shadow: $shadow-sm;
+  transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+
+  &:hover {
+    box-shadow: $shadow-md;
+    transform: translateY(-4px);
+    border-color: $accent;
+  }
+
+  &__icon {
+    width: 44px;
+    height: 44px;
+    background: $accent-pale;
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    color: $accent;
+
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  &__title {
+    font-size: 15px;
+    font-weight: 600;
+    color: $navy;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  &__desc {
+    font-size: 13.5px;
+    color: $text-muted;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+}
+
+// ── Responsive ───────────────────────────────
+@media (max-width: 1024px) {
+  .gt-highlights__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .gt-intro {
+    padding: 3.5rem 1.5rem;
+
+    &__inner {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+
+    &__img { height: 300px; }
+    &__img-badge { bottom: -14px; left: -10px; }
+  }
+
+  .gt-hero {
+    min-height: 420px;
+
+    &__content { padding: 2rem 1.5rem 1.5rem; }
+    &__title { font-size: 34px; }
+  }
+
+  .gt-mission { padding: 3.5rem 1.5rem; }
+  .gt-highlights { padding: 3.5rem 1.5rem; }
+}
+
+@media (max-width: 560px) {
+  .gt-hero__title { font-size: 26px; }
+
+  .gt-stats {
+    flex-wrap: wrap;
+
+    &__item {
+      flex: 1 1 33%;
+      border-bottom: 1px solid rgba(#fff, 0.1);
+    }
+  }
+
+  .gt-highlights__grid {
+    grid-template-columns: 1fr;
+  }
+}

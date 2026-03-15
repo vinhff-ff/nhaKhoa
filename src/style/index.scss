@@ -1,0 +1,52 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.layout-main {
+    &__header {
+        background: #fff;
+        border-bottom: 1px solid #D5D7DA;
+    }
+
+    &__content {
+        background-color: #f5f5f5;
+        min-height: 100vh;
+    }
+}
+
+@import './header.scss';
+@import './footer.scss';
+
+
+@import './mainLayout.scss';
+@import './btnCustom.scss';
+@import './login.scss';
+
+@import './menuCustom.scss';
+@import './bgWhiteBoder.scss';
+@import './layoutAdmin.scss';
+@import './input.scss';
+@import './select.scss';
+@import './profile.scss';
+@import './orderKham.scss';
+@import './thietBi.scss';
+@import './mySche.scss';
+
+@import './slide1.scss';
+@import './slide2.scss';
+@import './slide3.scss';
+@import './slide4.scss';
+@import './slide5.scss';
+
+@import './contact.scss';
+@import './gioithieu.scss';
+
+@import './trangChuBacSi.scss';
+@import './trangCRUDBacSi.scss';
+@import './adminContact.scss';
+@import './AdminBanner.scss';
+
+@import './bacSiLich.scss';
+@import './bacSiThongKe.scss';

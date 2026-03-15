@@ -1,0 +1,175 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+
+  display: flex;
+  justify-content: center;
+
+  background: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 12px 24px;
+  max-width: 1200px;
+  width: 100%;
+}
+
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+
+  .logo {
+    height: 40px;
+  }
+}
+
+.menu-mobile {
+  display: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+
+.header-menu {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  font-weight: 500;
+
+  .menu-item {
+    cursor: pointer;
+    color: #444;
+    transition: 0.2s;
+
+    span {
+      padding: 6px 0;
+      display: block;
+    }
+
+    &:hover {
+      color: #0052b3;
+    }
+
+    &.active {
+      color: #0052b3;
+      font-weight: 600;
+    }
+  }
+}
+
+
+
+.active-btn-header{
+  display: flex;
+  gap: 10px;
+}
+
+
+
+.user {
+  position: relative;
+
+  .user-trigger {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 14px;
+
+    strong {
+      color: #0052b3;
+    }
+  }
+
+  .user-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 1000;
+
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    padding: 10px;
+    min-width: 200px;
+  }
+}
+
+
+
+.drawer-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.drawer-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.drawer-item.active {
+  color: #0052b3;
+  font-weight: 600;
+}
+
+
+
+@media (max-width: 768px) {
+
+  .menu-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .header-menu {
+    display: none;
+  }
+
+  .header-container {
+    padding: 8px 12px;
+  }
+
+  .header-left {
+    gap: 10px;
+
+    .logo {
+      height: 32px;
+    }
+  }
+
+  .header-right {
+    gap: 10px;
+
+    .user {
+      .user-trigger {
+        p {
+          display: none;
+        }
+      }
+    }
+  }
+
+}
