@@ -1,166 +1,146 @@
 import { useState, useEffect, useRef } from "react";
 import Logo from "../../../assets/logo.png";
-import Sun from "../../../assets/sun.png";
-import VietNam from "../../../assets/vietnam.png";
-import Eng from '../../../assets/eng.png';
-import { getHanoiTemperature } from "../../../api/api";
-import { useTranslation } from "react-i18next";
-import { BellOutlined, DownOutlined, ShoppingCartOutlined } from "@ant-design/icons";
-import { Select } from "antd";
-import TagGold from "../../custom/tagGold";
+import { DownOutlined, MenuOutlined } from "@ant-design/icons";
+import { Drawer } from "antd";
 import ButtonCustom from "../../custom/button";
-import ModalCustom from "../../custom/modal";
-import Login from "../../../page/Login/login";
-import Register from "../../../page/Login/register";
 import UserSidebar from "../../custom/menu_user";
-const { Option } = Select;
+import { useNavigate, useLocation } from "react-router-dom";
+import routes from "../../../router/router";
+
 const HeaderCustom = () => {
-    const [temp, setTemp] = useState<number | null>(null);
-    const { t, i18n } = useTranslation();
-    const [avatar, setAvatar] = useState("https://kenh14cdn.com/2017/3235-1500365611879.jpg");
-    const token = localStorage.getItem("token");
-    const [isOpenLogin, setIsOpenLogin] = useState(false);
-    const [isOpenRegister, setIsOpenRegister] = useState(false);
-    const [isOpenUserDropdown, setIsOpenUserDropdown] = useState(false);
-    const userRef = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-        getHanoiTemperature()
-            .then(setTemp)
-            .catch();
-    }, []);
-    useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (
-                userRef.current &&
-                !userRef.current.contains(e.target as Node)
-            ) {
-                setIsOpenUserDropdown(false);
-            }
-        };
+  const navigate = useNavigate();
+  const location = useLocation();
 
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
+  const token = localStorage.getItem("access_token");
 
+  const [profile, setProfile] = useState<any>(null);
+  const [isOpenUserDropdown, setIsOpenUserDropdown] = useState(false);
+  const [openDrawer, setOpenDrawer] = useState(false);
 
-    return (
-        <>
-            <header className="header">
-                <div className="header-left">
-                    <img src={Logo} alt="sentrip" className="logo" />
+  const userRef = useRef<HTMLDivElement>(null);
 
-                    <div className="weather boder-chung">
-                        <img src={Sun} alt="sun" />
-                        <span>{temp !== null ? `${temp}°C` : "--°C"}</span>
-                    </div>
-                </div>
-                <div className="header-right">
-                    <span className="help">{t("Help")}</span>
+  const menuRoutes = routes.filter((r) => r.showInMenu && r.name);
 
-                    <div className="icon boder-chung"><ShoppingCartOutlined /></div>
-                    <div className="icon boder-chung"><BellOutlined /></div>
+  useEffect(() => {
+    const storedProfile = localStorage.getItem("user_profile");
+    if (storedProfile) {
+      try {
+        setProfile(JSON.parse(storedProfile));
+      } catch {}
+    }
+  }, [token]);
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userRef.current && !userRef.current.contains(e.target as Node)) {
+        setIsOpenUserDropdown(false);
+      }
+    };
 
+    document.addEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-                    <div className="lang boder-chung">
-                        <Select
-                            value={i18n.language}
-                            onChange={(value) => i18n.changeLanguage(value)}
-                            className="lang border-chung"
-                            dropdownMatchSelectWidth={true}
-                            bordered={false}
-                        >
-                            <Option value="vi">
-                                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                    <img src={VietNam} alt="vi" width={20} />
-                                    <span>Vi</span>
-                                </div>
-                            </Option>
+  return (
+    <>
+      <header className="header">
+        <div className="header-container">
 
-                            <Option value="en">
-                                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                    <img src={Eng} alt="en" width={20} />
-                                    <span>En</span>
-                                </div>
-                            </Option>
-                        </Select>
-                    </div>
-
-
-                    <div className="user" ref={userRef}>
-                        {token ? (
-                            <>
-                                <div
-                                    className="user-trigger"
-                                    onClick={() => setIsOpenUserDropdown(prev => !prev)}
-                                >
-                                    <img src={avatar} />
-                                    <div>
-                                        <p>{t("Hi")}, SenTrip <DownOutlined style={{fontSize:'13px', color:"#999"}}/></p>
-                                        <TagGold hideIcon style={{ padding: "0px", border: "none" }} />
-                                    </div>
-                                </div>
-
-                                {isOpenUserDropdown && (
-                                    <div className="user-dropdown">
-                                        <UserSidebar />
-                                    </div>
-                                )}
-                            </>
-                        ) : (
-                            <div style={{display:'flex', gap:'10px'}}>
-                                <ButtonCustom
-                                    text={t("Login")}
-                                    onClick={() => setIsOpenLogin(true)}
-                                />
-                                <ButtonCustom
-                                    className="registerBtn"
-                                    text={t("Register")}
-                                    onClick={() => setIsOpenRegister(true)}
-                                />
-                            </div>
-                        )}
-                    </div>
-
-                </div>
-            </header>
-            <div>
-                <ModalCustom
-                    open={isOpenLogin}
-                    onClose={() => setIsOpenLogin(false)}
-                    width={500}
-                >
-                    <Login
-                        onClose={() => {
-                            setIsOpenLogin(false);
-                        }}
-                        onRegister={() => {
-                            setIsOpenLogin(false);
-                            setIsOpenRegister(true);
-                        }}
-                    />
-                </ModalCustom>
-
-                <ModalCustom
-                    open={isOpenRegister}
-                    onClose={() => setIsOpenRegister(false)}
-                    width={500}
-                >
-                    <Register
-                        onRegisterSuccess={() => {
-                            setIsOpenRegister(false);
-                        }}
-                        onBackToLogin={() => {
-                            setIsOpenRegister(false);
-                            setIsOpenLogin(true);
-                        }}
-                    />
-                </ModalCustom>
-
-
+          <div className="header-left">
+            <div className="menu-mobile" onClick={() => setOpenDrawer(true)}>
+              <MenuOutlined />
             </div>
-        </>
-    );
+
+            <img
+              src={Logo}
+              alt="logo"
+              className="logo"
+              onClick={() => navigate("/")}
+            />
+          </div>
+
+          <div className="header-right">
+
+            <div className="header-menu">
+              {menuRoutes.map((item) => (
+                <div
+                  key={item.path}
+                  className={`menu-item ${
+                    location.pathname === item.path ? "active" : ""
+                  }`}
+                  onClick={() => navigate(item.path)}
+                >
+                  {item.name}
+                </div>
+              ))}
+            </div>
+
+            <div className="user" ref={userRef}>
+              {token ? (
+                <>
+                  <div
+                    className="user-trigger"
+                    onClick={() =>
+                      setIsOpenUserDropdown((prev) => !prev)
+                    }
+                  >
+                    <p>
+                      Chào <strong>{profile?.name}</strong>{" "}
+                      <DownOutlined style={{ fontSize: 13 }} />
+                    </p>
+                  </div>
+
+                  {isOpenUserDropdown && (
+                    <div className="user-dropdown">
+                      <UserSidebar />
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="active-btn-header">
+                  <ButtonCustom
+                    text="Đặt lịch khám"
+                    onClick={() => navigate("/order-lich-kham")}
+                  />
+                  <ButtonCustom
+                    text="Đăng nhập"
+                    onClick={() => navigate("/login")}
+                  />
+                </div>
+              )}
+            </div>
+
+          </div>
+        </div>
+      </header>
+
+      <Drawer
+        title="Menu"
+        placement="left"
+        open={openDrawer}
+        onClose={() => setOpenDrawer(false)}
+        width={260}
+      >
+        <div className="drawer-menu">
+          {menuRoutes.map((item) => (
+            <div
+              key={item.path}
+              className={`drawer-item ${
+                location.pathname === item.path ? "active" : ""
+              }`}
+              onClick={() => {
+                navigate(item.path);
+                setOpenDrawer(false);
+              }}
+            >
+              {item.name}
+            </div>
+          ))}
+        </div>
+      </Drawer>
+    </>
+  );
 };
 
 export default HeaderCustom;

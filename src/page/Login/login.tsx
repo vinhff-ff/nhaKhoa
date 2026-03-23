@@ -1,38 +1,77 @@
 import React, { useState } from "react";
 import ButtonCustom from "../../components/custom/button";
-import { useTranslation } from "react-i18next"
+import { message } from "antd";
+import { authLogin } from "../../api/auth";
+import { useNavigate } from "react-router-dom";
+import { getProfile } from "../../api/api";
+
 interface LoginProps {
-  onClose: () => void;
+  onClose?: () => void;
   onRegister?: () => void;
+  router?: string;
 }
 
-const Login: React.FC<LoginProps> = ({ onClose, onRegister }) => {
-  const [username, setUsername] = useState("");
+const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
+  const [gmail, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { t, i18n } = useTranslation();
-  const handleLogin = () => {
-    if (!username || !password) return;
+  const navigate = useNavigate();
 
-    setLoading(true);
-    localStorage.setItem("token", "abc");
+  const handleLogin = async () => {
+    if (!gmail || !password) {
+      message.warning("Vui lòng nhập email hoặc mật khẩu");
+      return;
+    }
 
-    setTimeout(() => {
-      console.log("Login:", { username, password });
+    try {
+      setLoading(true);
+      const loginRes = await authLogin({
+        gmail,
+        password,
+      });
+
+      if (loginRes.satus !== 200) {
+        message.error(loginRes.message || "Đăng nhập thất bại");
+        return;
+      }
+
+      const token = loginRes.data.token;
+      localStorage.setItem("access_token", token);
+
+      const profileRes = await getProfile();
+
+      if (profileRes.satus === 200) {
+        localStorage.setItem(
+          "user_profile",
+          JSON.stringify(profileRes.data)
+        );
+      }
+      message.success("Đăng nhập thành công");
+      if (router) {
+        navigate(`/admin`);
+      } else {
+        window.location.href = "/"
+      }
+
+
+    } catch (error: any) {
+      message.error(
+        error?.response?.data?.message || "Đăng nhập thất bại"
+      );
+    } finally {
       setLoading(false);
-      onClose();
-    }, 1000);
+    }
   };
 
   return (
     <div className="auth auth--login">
-      <h2 className="auth__title">{t("Login")}</h2>
+      <h2 className="auth__title">ĐĂNG NHẬP</h2>
 
       <div className="auth__field">
         <input
           type="email"
-          placeholder={t("Email") as string}
-          value={username}
+          placeholder="Email"
+          value={gmail}
           onChange={(e) => setUsername(e.target.value)}
         />
       </div>
@@ -40,23 +79,24 @@ const Login: React.FC<LoginProps> = ({ onClose, onRegister }) => {
       <div className="auth__field">
         <input
           type="password"
-          placeholder={t("PassWord") as string}
+          placeholder="Mật khẩu"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
 
       <ButtonCustom
-        text={t("Login")}
+        text="Đăng nhập"
         onClick={handleLogin}
         disabled={loading}
         className="auth__btn"
       />
-
+      <p style={{ textAlign: 'end', fontSize: '14px', color:"#555", marginTop:'-12px' }}><span>Quên mật khẩu?</span></p>
       <div className="auth__footer">
-        <span>{t("Don’t have an account?")}</span>
+
+        <span>Bạn chưa có tài khoản?</span>
         <span className="auth__link" onClick={onRegister}>
-          {t("Register")}
+          Đăng kí
         </span>
       </div>
     </div>

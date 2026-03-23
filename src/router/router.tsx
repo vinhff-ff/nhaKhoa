@@ -1,19 +1,25 @@
 import { lazy } from "react";
-import {
-  HomeOutlined,
-  FileTextOutlined,
-  HeartOutlined,
-  SettingOutlined,
-  StarOutlined,
-  CameraOutlined,
-} from "@ant-design/icons";
 import BaseUrl from "./path";
 import MainLayout from "../components/layout/mainLayout";
 import MainLayoutAdmin from "../admin/layout";
 
-const Home = lazy(() => import("../page/QuanLiDonHang/index"));
-const DetailsVe = lazy(() => import("../page/DetailsVe/index"));
-const QuanLiNhanVien = lazy(() => import("../admin/page/taiKhoanVaPhanQuyen"));
+const HomePage = lazy(() => import("../page/TrangChu/index"));
+const Login = lazy(() => import("../page/Login/index"));
+const Doctor = lazy(() => import("../page/Doctor/index"));
+const Profile = lazy(() => import("../page/Profile/index"));
+const GioiThieu = lazy(() => import("../page/GioiThieu/index"));
+const OrderKham = lazy(() => import("../page/OrderKham/index"));
+const Contact = lazy(() => import("../page/Contact/index"));
+const ThietBi = lazy(() => import("../page/ThietBiDetails/index"));
+const MySche = lazy(() => import("../page/QuanLiLichDat/index"));
+
+const TrangChuAdmin = lazy(() => import("../admin/page/Admin/TrangChu"));
+const CRUDBacSi = lazy(() => import("../admin/page/Admin/CRUDdoctor"));
+const ContactInfor = lazy(() => import("../admin/page/Admin/ContactInfor"));
+const BannerAdmin = lazy(() => import("../admin/page/Admin/BannerAdmin"));
+
+const BacSiLich = lazy(() => import("../admin/page/ManBacSi/quanLiLich"));
+const BacSiThongKe = lazy(() => import("../admin/page/ManBacSi/thongKe"));
 export interface AppRoute {
   name: string;
   path: string;
@@ -25,72 +31,135 @@ export interface AppRoute {
 }
 const routes = [
   {
-    name: "Ưu đãi của tôi",
+    name: "Trang chủ",
     path: BaseUrl.Home,
-    component: Home,
+    component: HomePage,
     layout: MainLayout,
     showInMenu: true,
     private: false,
-    icon: <HomeOutlined />,
   },
   {
-    name: "Đơn hàng của tôi",
-    path: "/orders",
-    component: Home,
+    name: "Bác sĩ",
+    path: BaseUrl.Doctor,
+    component: Doctor,
     layout: MainLayout,
     showInMenu: true,
     private: false,
-    icon: <FileTextOutlined />,
+    icon: null,
   },
   {
-    name: "Danh sách yêu thích",
-    path: "/favorite",
-    component: Home,
+    name: "Liên hệ",
+    path: BaseUrl.Contact,
+    component: Contact,
     layout: MainLayout,
     showInMenu: true,
     private: false,
-    icon: <HeartOutlined />,
   },
   {
-    name: "Cài đặt",
-    path: "/setting",
-    component: Home,
+    name: "Giới thiệu",
+    path: BaseUrl.GioiThieu,
+    component: GioiThieu,
     layout: MainLayout,
     showInMenu: true,
     private: false,
-    icon: <SettingOutlined />,
+    icon: null,
   },
   {
-    name: "Đánh giá dịch vụ",
-    path: "/rating",
-    component: Home,
+    path: BaseUrl.OrderKham,
+    component: OrderKham,
     layout: MainLayout,
     showInMenu: true,
     private: false,
-    icon: <StarOutlined />,
   },
   {
-    name: "Khoảnh khắc du lịch",
-    path: "/moment",
-    component: Home,
+    path: BaseUrl.Profile,
+    component: Profile,
     layout: MainLayout,
     showInMenu: true,
     private: false,
-    icon: <CameraOutlined />,
   },
   {
-    name: "Chi tiết vé",
-    path: "/details",
-    component: DetailsVe,
+    name: null,
+    path: BaseUrl.ThietBi,
+    component: ThietBi,
     layout: MainLayout,
+    showInMenu: true,
+    private: false,
+    icon: null,
+  },
+  {
+    name: null,
+    path: BaseUrl.Login,
+    component: Login,
+    layout: null,
     showInMenu: false,
     private: false,
     icon: null,
   },
   {
     name: null,
-    path: BaseUrl.QuanLiNhanVien,
-    component: QuanLiNhanVien,
+    path: BaseUrl.MySche,
+    component: MySche,
+    layout: MainLayout,
+    showInMenu: false,
+    private: false,
+    icon: null,
+  },
+
+
+  {
+    name: null,
+    path: BaseUrl.TrangChuAdmin,
+    component: TrangChuAdmin,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: false,
+    icon: null,
+  },
+  {
+    name: null,
+    path: BaseUrl.CRUDBacSi,
+    component: CRUDBacSi,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: false,
+    icon: null,
+  },
+  {
+    name: null,
+    path: BaseUrl.ContactInfor,
+    component: ContactInfor,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: false,
+    icon: null,
+  },
+  {
+    name: null,
+    path: BaseUrl.BannerAdmin,
+    component: BannerAdmin,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: false,
+    icon: null,
+  },
+
+
+
+
+  {
+    name: null,
+    path: BaseUrl.BacSiLich,
+    component: BacSiLich,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: false,
+    icon: null,
+  },
+  {
+    name: null,
+    path: BaseUrl.BacSiThongKe,
+    component: BacSiThongKe,
     layout: MainLayoutAdmin,
     showInMenu: false,
     private: false,

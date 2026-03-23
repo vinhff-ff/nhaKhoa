@@ -1,0 +1,722 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap');
+
+$navy: #1a3a5c;
+$navy-dark: #112845;
+$navy-pale: #d6e8f5;
+$accent: #2e7d9c;
+$accent-pale: #e0f2f9;
+$gold: #c49a3c;
+$danger: #c0392b;
+$danger-pale: #fdecea;
+$success: #1a7a4a;
+$success-pale: #e6f5ed;
+$warning: #b45309;
+$warning-pale: #fef3cd;
+$text-main: #1c2b3a;
+$text-muted: #5a6e7f;
+$text-light: #8fa3b3;
+$bg-page: #f5f5f5;
+$bg-white: #ffffff;
+$border: #dde5ec;
+$radius-sm: 6px;
+$radius-md: 10px;
+$radius-lg: 16px;
+$shadow-sm: 0 1px 6px rgba(26, 58, 92, 0.07);
+$shadow-md: 0 6px 24px rgba(26, 58, 92, 0.13);
+$shadow-xl: 0 16px 56px rgba(26, 58, 92, 0.22);
+
+.uap {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background: $bg-page;
+    min-height: 100vh;
+    padding: 2rem 2.5rem 4rem;
+    color: $text-main;
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.uap-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    &__title {
+        font-family: 'Lora', serif;
+        font-size: 22px;
+        font-weight: 600;
+        color: $navy;
+        margin: 0;
+    }
+}
+
+.uap-filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.uap-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 34px;
+    padding: 0 14px;
+    border-radius: 20px;
+    border: 1px solid $border;
+    background: $bg-white;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: $text-muted;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+
+    &__count {
+        font-size: 11px;
+        font-weight: 600;
+        background: $bg-page;
+        color: $text-muted;
+        padding: 1px 7px;
+        border-radius: 10px;
+        transition: background 0.15s, color 0.15s;
+    }
+
+    &:hover {
+        background: $bg-page;
+    }
+
+    &--active {
+        &.uap-filter-btn--upcoming {
+            background: $accent;
+            border-color: $accent;
+            color: #fff;
+
+            .uap-filter-btn__count {
+                background: rgba(#fff, .2);
+                color: #fff;
+            }
+        }
+
+        &.uap-filter-btn--completed {
+            background: $success;
+            border-color: $success;
+            color: #fff;
+
+            .uap-filter-btn__count {
+                background: rgba(#fff, .2);
+                color: #fff;
+            }
+        }
+
+        &.uap-filter-btn--cancelled {
+            background: $danger;
+            border-color: $danger;
+            color: #fff;
+
+            .uap-filter-btn__count {
+                background: rgba(#fff, .2);
+                color: #fff;
+            }
+        }
+
+        &:not([class*="uap-filter-btn--u"]):not([class*="uap-filter-btn--co"]):not([class*="uap-filter-btn--ca"]) {
+            background: $navy;
+            border-color: $navy;
+            color: #fff;
+
+            .uap-filter-btn__count {
+                background: rgba(#fff, .2);
+                color: #fff;
+            }
+        }
+    }
+}
+
+.uap-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.uap-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 4rem 2rem;
+    color: $text-light;
+
+    svg {
+        width: 52px;
+        height: 52px;
+        opacity: 0.5;
+    }
+
+    p {
+        font-size: 14px;
+        margin: 0;
+    }
+}
+
+.uap-card {
+    display: flex;
+    align-items: stretch;
+    background: $bg-white;
+    border: 1px solid $border;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    box-shadow: $shadow-sm;
+    transition: box-shadow 0.2s, transform 0.2s;
+    border-left: 4px solid $border;
+
+    &:hover {
+        box-shadow: $shadow-md;
+    }
+
+    &--upcoming {
+        border-left-color: $accent;
+    }
+
+    &--completed {
+        border-left-color: $success;
+    }
+
+    &--cancelled {
+        border-left-color: $danger;
+        opacity: 0.78;
+    }
+
+    &__left {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 1.25rem;
+        flex-shrink: 0;
+    }
+
+    &__date-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 44px;
+    }
+
+    &__day {
+        font-family: 'Lora', serif;
+        font-size: 28px;
+        font-weight: 600;
+        color: $navy;
+        line-height: 1;
+    }
+
+    &__month-year {
+        font-size: 11px;
+        color: $text-light;
+        font-weight: 500;
+        margin-top: 2px;
+    }
+
+    &__divider {
+        width: 1px;
+        background: $border;
+        margin: 12px 0;
+        flex-shrink: 0;
+    }
+
+    &__body {
+        flex: 1;
+        padding: 14px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-width: 0;
+    }
+
+    &__top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    &__info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    &__details {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    &__detail-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 7px;
+        font-size: 13px;
+        color: $text-muted;
+
+        svg {
+            width: 13px;
+            height: 13px;
+            flex-shrink: 0;
+            margin-top: 2px;
+            color: $text-light;
+        }
+
+        &--problem {
+            font-size: 12.5px;
+            color: $text-muted;
+            font-weight: 300;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: center;
+        gap: 6px;
+        padding: 12px 14px 12px 0;
+        flex-shrink: 0;
+    }
+
+    &__action-btn {
+        height: 30px;
+        padding: 0 12px;
+        border-radius: $radius-sm;
+        font-family: 'Be Vietnam Pro', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1px solid;
+        transition: background 0.15s, color 0.15s, transform 0.1s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        white-space: nowrap;
+
+        svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        &:hover {
+            transform: translateY(-1px);
+        }
+
+        &--cancel {
+            background: $warning-pale;
+            color: $warning;
+            border-color: lighten($warning, 28%);
+
+            &:hover {
+                background: darken($warning-pale, 4%);
+            }
+        }
+
+        &--rebook {
+            background: $navy;
+            color: #fff;
+            border-color: $navy;
+
+            &:hover {
+                background: $navy-dark;
+            }
+        }
+
+        &--delete {
+            background: transparent;
+            color: $text-light;
+            border-color: $border;
+            width: 30px;
+            padding: 0;
+
+            &:hover {
+                background: $danger-pale;
+                color: $danger;
+                border-color: $danger;
+            }
+        }
+    }
+}
+
+.uap-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 22px;
+    padding: 0 9px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 600;
+
+    svg {
+        width: 9px;
+        height: 9px;
+    }
+
+    &--upcoming {
+        background: $accent-pale;
+        color: $accent;
+    }
+
+    &--completed {
+        background: $success-pale;
+        color: $success;
+    }
+
+    &--cancelled {
+        background: $danger-pale;
+        color: $danger;
+    }
+}
+
+.uap-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba($navy-dark, 0.55);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.uap-modal {
+    background: $bg-white;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-xl;
+    width: 100%;
+    max-width: 480px;
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    &--confirm {
+        max-width: 400px;
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid $border;
+        flex-shrink: 0;
+
+        h2 {
+            font-family: 'Lora', serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: $navy;
+            margin: 0;
+        }
+    }
+
+    &__close {
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid $border;
+        border-radius: $radius-sm;
+        background: transparent;
+        color: $text-muted;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background 0.15s;
+
+        &:hover {
+            background: $bg-page;
+        }
+    }
+
+    &__body {
+        padding: 1.5rem;
+        overflow-y: auto;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    &__footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 1rem 1.5rem;
+        border-top: 1px solid $border;
+        flex-shrink: 0;
+    }
+}
+
+.uap-rebook-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: $accent-pale;
+    border: 1px solid lighten($accent, 24%);
+    border-radius: $radius-md;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: $accent;
+    line-height: 1.55;
+
+    svg {
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+}
+
+.uap-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    label {
+        font-size: 12px;
+        font-weight: 600;
+        color: $text-muted;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+
+        span {
+            color: $danger;
+            margin-left: 2px;
+        }
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+        padding: 9px 12px;
+        border: 1px solid $border;
+        border-radius: $radius-md;
+        font-family: 'Be Vietnam Pro', sans-serif;
+        font-size: 14px;
+        color: $text-main;
+        background: #f8fafc;
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+
+        &::placeholder {
+            color: $text-light;
+        }
+
+        &:focus {
+            border-color: $accent;
+            box-shadow: 0 0 0 3px rgba($accent, 0.11);
+            background: $bg-white;
+        }
+    }
+
+    input,
+    select {
+        height: 42px;
+    }
+
+    select {
+        cursor: pointer;
+    }
+
+    textarea {
+        resize: vertical;
+        line-height: 1.65;
+    }
+
+    &__error {
+        font-size: 11.5px;
+        color: $danger;
+        margin: 0;
+    }
+}
+
+.uap-time-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.uap-time-btn {
+    height: 40px;
+    border-radius: $radius-md;
+    border: 1px solid $border;
+    background: #f8fafc;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: $text-muted;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+
+    &:hover {
+        background: $navy-pale;
+        color: $navy;
+        border-color: $navy-pale;
+    }
+
+    &--active {
+        background: $navy;
+        color: #fff;
+        border-color: $navy;
+        font-weight: 600;
+    }
+}
+
+.uap-confirm {
+    &__icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 14px;
+
+        svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        &--warning {
+            background: $warning-pale;
+            color: $warning;
+        }
+
+        &--danger {
+            background: $danger-pale;
+            color: $danger;
+        }
+    }
+
+    &__title {
+        font-family: 'Lora', serif;
+        font-size: 18px;
+        font-weight: 600;
+        color: $navy;
+        text-align: center;
+        margin: 0 0 10px;
+    }
+
+    &__desc {
+        font-size: 13.5px;
+        color: $text-muted;
+        text-align: center;
+        line-height: 1.7;
+        margin: 0 0 20px;
+
+        strong {
+            color: $text-main;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+}
+
+.uap-modal--confirm .uap-modal__body {
+    align-items: stretch;
+}
+
+.uap-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 40px;
+    padding: 0 18px;
+    border-radius: $radius-md;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background 0.15s, box-shadow 0.15s, transform 0.12s;
+
+    svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    &--primary {
+        background: $navy;
+        color: #fff;
+        border-color: $navy;
+
+        &:hover {
+            background: $navy-dark;
+            box-shadow: 0 3px 12px rgba($navy, .3);
+        }
+    }
+
+    &--ghost {
+        background: $bg-white;
+        color: $text-muted;
+        border-color: $border;
+
+        &:hover {
+            background: $bg-page;
+        }
+    }
+
+    &--danger {
+        background: $danger;
+        color: #fff;
+        border-color: $danger;
+
+        &:hover {
+            background: darken($danger, 8%);
+        }
+    }
+
+    &--warning {
+        background: $warning;
+        color: #fff;
+        border-color: $warning;
+
+        &:hover {
+            background: darken($warning, 8%);
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .uap {
+        padding: 1.5rem 1rem 3rem;
+    }
+
+    .uap-card {
+        &__left {
+            padding: 0 1rem;
+        }
+
+        &__day {
+            font-size: 22px;
+        }
+
+        &__actions {
+            padding-right: 10px;
+        }
+    }
+
+    .uap-time-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

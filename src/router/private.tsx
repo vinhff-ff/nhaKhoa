@@ -8,8 +8,12 @@ interface PrivateRouteProps {
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const location = useLocation();
 
-  const token = localStorage.getItem("access_token")
-  if (!token) {
+  const profileString = localStorage.getItem("user_profile");
+  const profile = profileString ? JSON.parse(profileString) : null;
+
+  const allowRoles = ["ADMIN", "EMPLOYEE", "SUPPLIER", "ACCOUNTANT"];
+
+  if (!profile || !allowRoles.includes(profile.role)) {
     return (
       <Navigate
         to="/login"
@@ -18,6 +22,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
       />
     );
   }
+
   return <>{children}</>;
 };
 

@@ -1,3 +1,4 @@
+import Footer from "./Footer";
 import HeaderCustom from "./Header";
 
 interface Props {
@@ -16,7 +17,7 @@ const MainLayout = ({ children }: Props) => {
       </main>
 
       <div className="layout-main__footer">
-
+        <Footer/>
       </div>
     </div>
   );
