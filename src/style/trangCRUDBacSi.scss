@@ -297,6 +297,7 @@ $shadow-xl:   0 16px 56px rgba(26,58,92,0.22);
 }
 
 .adm-modal {
+  padding: 20px;
   background: $bg-white;
   border-radius: $radius-lg;
   box-shadow: $shadow-xl;
@@ -561,6 +562,7 @@ $shadow-xl:   0 16px 56px rgba(26,58,92,0.22);
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  padding: 20px;
 }
 
 @media (max-width: 900px) {

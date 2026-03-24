@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { getAppointments, updateAppointments, getSchedule } from "../../../api/doctor";
 
+// ─── Types ────────────────────────────────────────────────────
 interface Appointment {
   id: number;
   name: string;
@@ -11,120 +13,34 @@ interface Appointment {
   examTime: string;
   problem: string;
   confirmed: boolean;
+  status: string;
 }
 
-const initialAppointments: Appointment[] = [
-  {
-    id: 1,
-    name: "Nguyễn Thị Lan",
-    dob: "1990-05-14",
-    phone: "0912 345 678",
-    email: "lan.nt@gmail.com",
-    address: "12 Nguyễn Trãi, Đan Phượng, Hà Nội",
-    examDate: "2025-06-02",
-    examTime: "08:00",
-    problem: "Mắt bị mờ khi nhìn xa, có thể bị cận thị tiến triển.",
-    confirmed: true,
-  },
-  {
-    id: 2,
-    name: "Trần Văn Minh",
-    dob: "1985-11-20",
-    phone: "0987 654 321",
-    email: "minhtv@yahoo.com",
-    address: "45 Lê Lợi, Đan Phượng, Hà Nội",
-    examDate: "2025-06-04",
-    examTime: "09:00",
-    problem: "Đau mắt, chảy nước mắt liên tục từ 1 tuần nay.",
-    confirmed: true,
-  },
-  {
-    id: 3,
-    name: "Phạm Hoàng Anh",
-    dob: "2000-03-08",
-    phone: "0903 111 222",
-    email: "anghp2000@gmail.com",
-    address: "78 Trần Hưng Đạo, Đan Phượng, Hà Nội",
-    examDate: "2025-06-04",
-    examTime: "10:00",
-    problem: "Kiểm tra định kỳ, kính hiện tại không còn phù hợp.",
-    confirmed: false,
-  },
-  {
-    id: 4,
-    name: "Lê Thị Hương",
-    dob: "1975-07-22",
-    phone: "0978 888 999",
-    email: "huongle@outlook.com",
-    address: "23 Hùng Vương, Đan Phượng, Hà Nội",
-    examDate: "2025-06-09",
-    examTime: "13:30",
-    problem: "Mắt bị lão thị, khó đọc sách báo, cần tư vấn kính.",
-    confirmed: true,
-  },
-  {
-    id: 5,
-    name: "Vũ Đức Thành",
-    dob: "1995-09-30",
-    phone: "0966 777 888",
-    email: "thanhvd95@gmail.com",
-    address: "56 Đinh Tiên Hoàng, Đan Phượng, Hà Nội",
-    examDate: "2025-06-11",
-    examTime: "15:00",
-    problem: "Mắt khô, hay bị kích ứng khi làm việc với máy tính.",
-    confirmed: false,
-  },
-  {
-    id: 6,
-    name: "Bùi Thị Mai",
-    dob: "1988-02-14",
-    phone: "0912 000 111",
-    email: "maibui88@gmail.com",
-    address: "90 Phan Bội Châu, Đan Phượng, Hà Nội",
-    examDate: "2025-06-16",
-    examTime: "08:00",
-    problem: "Loạn thị, nhìn hình ảnh bị méo, đặc biệt vào ban đêm.",
-    confirmed: true,
-  },
-  {
-    id: 7,
-    name: "Đỗ Ngọc Sơn",
-    dob: "1992-12-05",
-    phone: "0934 222 333",
-    email: "sondo92@gmail.com",
-    address: "34 Lý Thường Kiệt, Đan Phượng, Hà Nội",
-    examDate: "2025-06-18",
-    examTime: "09:00",
-    problem: "Tư vấn phẫu thuật LASIK, cận 4.5 độ cả hai mắt.",
-    confirmed: false,
-  },
-  {
-    id: 8,
-    name: "Nguyễn Bích Ngọc",
-    dob: "1998-06-18",
-    phone: "0945 333 444",
-    email: "ngocnb98@gmail.com",
-    address: "67 Ngô Quyền, Đan Phượng, Hà Nội",
-    examDate: "2025-06-23",
-    examTime: "10:00",
-    problem: "Viêm kết mạc tái phát nhiều lần trong năm.",
-    confirmed: true,
-  },
-  {
-    id: 9,
-    name: "Hoàng Văn Long",
-    dob: "1980-04-10",
-    phone: "0956 444 555",
-    email: "longhv80@gmail.com",
-    address: "11 Bà Triệu, Đan Phượng, Hà Nội",
-    examDate: "2025-06-25",
-    examTime: "13:30",
-    problem: "Kiểm tra võng mạc định kỳ, bệnh nhân tiểu đường type 2.",
-    confirmed: false,
-  },
-];
+interface ScheduleAppointment {
+  id: number;
+  nameCustomer: string;
+  year: string;
+  createdAt: string;
+  timeOpen: string;
+  status: string;
+}
 
+interface TodaySchedule {
+  scheduleId: number;
+  workDate: string;
+  startTime: string;
+  endTime: string;
+  maxPatient: number;
+  scheduleStatus: string;
+  appointments: ScheduleAppointment[];
+}
+
+// ─── Helpers ──────────────────────────────────────────────────
 const WEEKDAYS = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+const MONTH_NAMES = [
+  "Tháng 1","Tháng 2","Tháng 3","Tháng 4","Tháng 5","Tháng 6",
+  "Tháng 7","Tháng 8","Tháng 9","Tháng 10","Tháng 11","Tháng 12",
+];
 
 const getDaysInMonth = (year: number, month: number) =>
   new Date(year, month + 1, 0).getDate();
@@ -133,48 +49,125 @@ const getFirstDayOfMonth = (year: number, month: number) =>
   new Date(year, month, 1).getDay();
 
 const formatDate = (iso: string) => {
+  if (!iso) return "";
   const [y, m, d] = iso.split("-");
   return `${d}/${m}/${y}`;
 };
 
-const formatDob = (iso: string) => formatDate(iso);
+/** Map dữ liệu từ API /appointments/my-appointments về shape nội bộ */
+const mapApiToAppointment = (raw: any): Appointment => ({
+  id:        raw.id,
+  name:      raw.name       ?? raw.nameCustomer ?? "",
+  dob:       raw.date       ?? raw.year         ?? "",
+  phone:     raw.phone      ?? "",
+  email:     raw.gmail      ?? raw.email        ?? "",
+  address:   raw.address    ?? "",
+  examDate:  raw.createdAt  ?? "",
+  examTime:  raw.timeOpen   ? raw.timeOpen.slice(0, 5) : "",
+  problem:   raw.note       ?? "",
+  status:    raw.status     ?? "PENDING",
+  confirmed: raw.status === "CONFIRMED",
+});
 
-const MONTH_NAMES = [
-  "Tháng 1","Tháng 2","Tháng 3","Tháng 4","Tháng 5","Tháng 6",
-  "Tháng 7","Tháng 8","Tháng 9","Tháng 10","Tháng 11","Tháng 12",
-];
+/** Map dữ liệu từ API /schedules/today (appointments bên trong) */
+const mapScheduleAptToAppointment = (raw: ScheduleAppointment): Appointment => ({
+  id:        raw.id,
+  name:      raw.nameCustomer ?? "",
+  dob:       raw.year         ?? "",
+  phone:     "",
+  email:     "",
+  address:   "",
+  examDate:  raw.createdAt    ?? "",
+  examTime:  raw.timeOpen     ? raw.timeOpen.slice(0, 5) : "",
+  problem:   "",
+  status:    raw.status       ?? "PENDING",
+  confirmed: raw.status === "CONFIRMED",
+});
 
+// ─── Component ───────────────────────────────────────────────
 const AdminSchedule: React.FC = () => {
   const today = new Date();
-  const [viewYear, setViewYear] = useState(today.getFullYear());
+  const [viewYear,  setViewYear]  = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
-  const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
-  const [selected, setSelected] = useState<Appointment | null>(null);
-  const [dayAppointments, setDayAppointments] = useState<Appointment[] | null>(null);
-  const [filterConfirmed, setFilterConfirmed] = useState<"all" | "confirmed" | "pending">("all");
 
-  const prevMonth = () => {
-    if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1); }
-    else setViewMonth(m => m - 1);
-  };
+  const [appointments,    setAppointments]    = useState<Appointment[]>([]);
+  const [todaySchedule,   setTodaySchedule]   = useState<TodaySchedule | null>(null);
+  const [loading,         setLoading]         = useState(true);
+  const [updatingId,      setUpdatingId]      = useState<number | null>(null);
 
-  const nextMonth = () => {
-    if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y + 1); }
-    else setViewMonth(m => m + 1);
-  };
+  const [selected,         setSelected]         = useState<Appointment | null>(null);
+  const [dayAppointments,  setDayAppointments]  = useState<Appointment[] | null>(null);
+  const [filterConfirmed,  setFilterConfirmed]  = useState<"all" | "confirmed" | "pending">("all");
 
-  const toggleConfirm = (id: number) => {
-    setAppointments(prev =>
-      prev.map(a => a.id === id ? { ...a, confirmed: !a.confirmed } : a)
-    );
-    if (selected?.id === id) {
-      setSelected(prev => prev ? { ...prev, confirmed: !prev.confirmed } : null);
+  // ── Fetch tất cả dữ liệu ──
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const [aptRes, scheduleRes] = await Promise.all([
+        getAppointments(),
+        getSchedule(),
+      ]);
+
+      // /appointments/my-appointments trả về { data: [...] } hoặc mảng thẳng
+      const rawList: any[] = Array.isArray(aptRes)
+        ? aptRes
+        : aptRes?.data ?? [];
+      setAppointments(rawList.map(mapApiToAppointment));
+
+      // /schedules/today trả về object đơn hoặc null
+      if (scheduleRes) setTodaySchedule(scheduleRes);
+    } catch (err) {
+      console.error("Lỗi tải dữ liệu lịch:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchData(); }, [fetchData]);
+
+  // ── Toggle xác nhận / huỷ ──
+  const toggleConfirm = async (id: number) => {
+    const target = appointments.find(a => a.id === id);
+    if (!target) return;
+
+    const newStatus = target.confirmed ? "PENDING" : "CONFIRMED";
+    setUpdatingId(id);
+    try {
+      await updateAppointments(id, { status: newStatus });
+
+      // Cập nhật local state ngay, không cần refetch
+      setAppointments(prev =>
+        prev.map(a => a.id === id
+          ? { ...a, confirmed: !a.confirmed, status: newStatus }
+          : a
+        )
+      );
+      if (selected?.id === id) {
+        setSelected(prev => prev
+          ? { ...prev, confirmed: !prev.confirmed, status: newStatus }
+          : null
+        );
+      }
+    } catch (err) {
+      console.error("Lỗi cập nhật trạng thái:", err);
+    } finally {
+      setUpdatingId(null);
     }
   };
 
   const deleteAppointment = (id: number) => {
     setAppointments(prev => prev.filter(a => a.id !== id));
     setSelected(null);
+  };
+
+  // ── Calendar helpers ──
+  const prevMonth = () => {
+    if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1); }
+    else setViewMonth(m => m - 1);
+  };
+  const nextMonth = () => {
+    if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y + 1); }
+    else setViewMonth(m => m + 1);
   };
 
   const getAppointmentsForDate = (day: number) => {
@@ -184,22 +177,30 @@ const AdminSchedule: React.FC = () => {
 
   const filteredAppointments = appointments.filter(a => {
     if (filterConfirmed === "confirmed") return a.confirmed;
-    if (filterConfirmed === "pending") return !a.confirmed;
+    if (filterConfirmed === "pending")   return !a.confirmed;
     return true;
   });
 
   const daysInMonth = getDaysInMonth(viewYear, viewMonth);
-  const firstDay = getFirstDayOfMonth(viewYear, viewMonth);
+  const firstDay    = getFirstDayOfMonth(viewYear, viewMonth);
   const cells: (number | null)[] = [];
   for (let i = 0; i < firstDay; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
   while (cells.length % 7 !== 0) cells.push(null);
-
   const weeks: (number | null)[][] = [];
   for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
 
   const isToday = (day: number) =>
     day === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear();
+
+  // ─────────────────────────────────────────────────────────────
+  if (loading) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: 400 }}>
+        <span style={{ color: "#90a4ae", fontSize: 15 }}>Đang tải dữ liệu...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="ads">
@@ -212,10 +213,24 @@ const AdminSchedule: React.FC = () => {
             {appointments.filter(a => a.confirmed).length} đã xác nhận
           </span>
         </div>
+
+        {/* Banner lịch hôm nay từ getSchedule() */}
+        {todaySchedule && (
+          <div className="ads-today-banner" style={{display:'flex', gap:'30px'}}>
+            <span className="ads-today-banner__label">Lịch hôm nay:  {todaySchedule.startTime?.slice(0,5)} – {todaySchedule.endTime?.slice(0,5)}</span>
+            <span className="ads-today-banner__count">
+              {todaySchedule.appointments?.length ?? 0} / {todaySchedule.maxPatient} bệnh nhân
+            </span>
+            <span className={`ads-today-banner__status ads-today-banner__status--${todaySchedule.scheduleStatus?.toLowerCase()}`}>
+              {todaySchedule.scheduleStatus === "AVAILABLE" ? " Đang mở" : todaySchedule.scheduleStatus}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="ads-body">
 
+        {/* ── LEFT: Calendar ── */}
         <div className="ads-left">
           <div className="ads-calendar">
             <div className="ads-calendar__nav">
@@ -243,18 +258,18 @@ const AdminSchedule: React.FC = () => {
                   <tr key={wi}>
                     {week.map((day, di) => {
                       if (!day) return <td key={di} className="ads-cal-table__empty" />;
-                      const dayApts = getAppointmentsForDate(day);
+                      const dayApts      = getAppointmentsForDate(day);
                       const hasConfirmed = dayApts.some(a => a.confirmed);
-                      const hasPending = dayApts.some(a => !a.confirmed);
-                      const isSun = di === 0;
+                      const hasPending   = dayApts.some(a => !a.confirmed);
+                      const isSun        = di === 0;
                       return (
                         <td
                           key={di}
                           className={[
                             "ads-cal-table__day",
-                            isToday(day) ? "ads-cal-table__day--today" : "",
-                            isSun ? "ads-cal-table__day--sun" : "",
-                            dayApts.length > 0 ? "ads-cal-table__day--has" : "",
+                            isToday(day)       ? "ads-cal-table__day--today" : "",
+                            isSun              ? "ads-cal-table__day--sun"   : "",
+                            dayApts.length > 0 ? "ads-cal-table__day--has"   : "",
                           ].join(" ")}
                           onClick={() => dayApts.length > 0 && setDayAppointments(dayApts)}
                         >
@@ -262,7 +277,7 @@ const AdminSchedule: React.FC = () => {
                           {(hasConfirmed || hasPending) && (
                             <div className="ads-cal-table__dots">
                               {hasConfirmed && <span className="ads-cal-table__dot ads-cal-table__dot--confirmed" />}
-                              {hasPending && <span className="ads-cal-table__dot ads-cal-table__dot--pending" />}
+                              {hasPending   && <span className="ads-cal-table__dot ads-cal-table__dot--pending"   />}
                             </div>
                           )}
                         </td>
@@ -275,17 +290,43 @@ const AdminSchedule: React.FC = () => {
 
             <div className="ads-calendar__legend">
               <div className="ads-legend-item">
-                <span className="ads-legend-dot ads-legend-dot--confirmed" />
-                Đã xác nhận
+                <span className="ads-legend-dot ads-legend-dot--confirmed" />Đã xác nhận
               </div>
               <div className="ads-legend-item">
-                <span className="ads-legend-dot ads-legend-dot--pending" />
-                Chờ xác nhận
+                <span className="ads-legend-dot ads-legend-dot--pending" />Chờ xác nhận
               </div>
             </div>
           </div>
+
+          {/* Danh sách lịch hôm nay từ getSchedule() */}
+          {/* {todaySchedule && todaySchedule.appointments?.length > 0 && (
+            <div className="ads-today-list">
+              <div className="ads-today-list__title">Lịch hôm nay ({formatDate(todaySchedule.workDate)})</div>
+              {todaySchedule.appointments.map(a => (
+                <div
+                  key={a.id}
+                  className="ads-day-item"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    const full = appointments.find(ap => ap.id === a.id);
+                    if (full) setSelected(full);
+                    else setSelected(mapScheduleAptToAppointment(a));
+                  }}
+                >
+                  <div className="ads-day-item__time">{a.timeOpen?.slice(0, 5)}</div>
+                  <div className="ads-day-item__info">
+                    <span className="ads-day-item__name">{a.nameCustomer}</span>
+                  </div>
+                  <span className={`ads-status-btn ${a.status === "CONFIRMED" ? "ads-status-btn--confirmed" : "ads-status-btn--pending"}`}>
+                    {a.status === "CONFIRMED" ? "Đã xác nhận" : "Chờ xác nhận"}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )} */}
         </div>
 
+        {/* ── RIGHT: Table ── */}
         <div className="ads-right">
           <div className="ads-table-header">
             <span className="ads-table-title">Danh sách lịch hẹn</span>
@@ -329,7 +370,7 @@ const AdminSchedule: React.FC = () => {
                       <td className="ads-table__idx">{i + 1}</td>
                       <td>
                         <div className="ads-table__name">{a.name}</div>
-                        <div className="ads-table__phone">{a.phone}</div>
+                        <div className="ads-table__phone">{a.phone || "—"}</div>
                       </td>
                       <td className="ads-table__date">{formatDate(a.examDate)}</td>
                       <td>
@@ -338,14 +379,18 @@ const AdminSchedule: React.FC = () => {
                       <td onClick={e => e.stopPropagation()}>
                         <button
                           className={`ads-status-btn ${a.confirmed ? "ads-status-btn--confirmed" : "ads-status-btn--pending"}`}
+                          disabled={updatingId === a.id}
                           onClick={() => toggleConfirm(a.id)}
                         >
-                          {a.confirmed ? (
-                            <>
-                              <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                              Đã xác nhận
-                            </>
-                          ) : "Chờ xác nhận"}
+                          {updatingId === a.id
+                            ? "..."
+                            : a.confirmed
+                              ? (<>
+                                  <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                  Đã xác nhận
+                                </>)
+                              : "Chờ xác nhận"
+                          }
                         </button>
                       </td>
                       <td onClick={e => e.stopPropagation()}>
@@ -375,6 +420,7 @@ const AdminSchedule: React.FC = () => {
         </div>
       </div>
 
+      {/* ── Modal chi tiết lịch hẹn ── */}
       {selected && (
         <div className="ads-overlay" onClick={() => setSelected(null)}>
           <div className="ads-modal" onClick={e => e.stopPropagation()}>
@@ -391,19 +437,19 @@ const AdminSchedule: React.FC = () => {
               <div className="ads-detail-grid">
                 <div className="ads-detail-item">
                   <span className="ads-detail-label">Ngày sinh</span>
-                  <span className="ads-detail-value">{formatDob(selected.dob)}</span>
+                  <span className="ads-detail-value">{formatDate(selected.dob) || "—"}</span>
                 </div>
                 <div className="ads-detail-item">
                   <span className="ads-detail-label">Số điện thoại</span>
-                  <span className="ads-detail-value ads-detail-value--phone">{selected.phone}</span>
+                  <span className="ads-detail-value ads-detail-value--phone">{selected.phone || "—"}</span>
                 </div>
                 <div className="ads-detail-item">
                   <span className="ads-detail-label">Email</span>
-                  <span className="ads-detail-value ads-detail-value--email">{selected.email}</span>
+                  <span className="ads-detail-value ads-detail-value--email">{selected.email || "—"}</span>
                 </div>
                 <div className="ads-detail-item ads-detail-item--full">
                   <span className="ads-detail-label">Địa chỉ</span>
-                  <span className="ads-detail-value">{selected.address}</span>
+                  <span className="ads-detail-value">{selected.address || "—"}</span>
                 </div>
                 <div className="ads-detail-item">
                   <span className="ads-detail-label">Ngày khám</span>
@@ -415,10 +461,12 @@ const AdminSchedule: React.FC = () => {
                 </div>
               </div>
 
-              <div className="ads-detail-problem">
-                <span className="ads-detail-label">Vấn đề mắt</span>
-                <div className="ads-detail-problem__box">{selected.problem}</div>
-              </div>
+              {selected.problem && (
+                <div className="ads-detail-problem">
+                  <span className="ads-detail-label">Ghi chú</span>
+                  <div className="ads-detail-problem__box">{selected.problem}</div>
+                </div>
+              )}
             </div>
 
             <div className="ads-modal__footer">
@@ -432,9 +480,13 @@ const AdminSchedule: React.FC = () => {
                 <button className="ads-btn ads-btn--ghost" onClick={() => setSelected(null)}>Đóng</button>
                 <button
                   className={`ads-btn ${selected.confirmed ? "ads-btn--ghost" : "ads-btn--primary"}`}
+                  disabled={updatingId === selected.id}
                   onClick={() => toggleConfirm(selected.id)}
                 >
-                  {selected.confirmed ? "Hủy xác nhận" : "Xác nhận lịch"}
+                  {updatingId === selected.id
+                    ? "Đang xử lý..."
+                    : selected.confirmed ? "Hủy xác nhận" : "Xác nhận lịch"
+                  }
                 </button>
               </div>
             </div>
@@ -442,6 +494,7 @@ const AdminSchedule: React.FC = () => {
         </div>
       )}
 
+      {/* ── Modal lịch theo ngày ── */}
       {dayAppointments && (
         <div className="ads-overlay" onClick={() => setDayAppointments(null)}>
           <div className="ads-modal ads-modal--day" onClick={e => e.stopPropagation()}>

@@ -15,7 +15,7 @@ $warning-pale:#fef3cd;
 $text-main:   #1c2b3a;
 $text-muted:  #5a6e7f;
 $text-light:  #8fa3b3;
-$bg-page:     #f0f3f6;
+$bg-page:     #fff;
 $bg-white:    #ffffff;
 $border:      #dde5ec;
 $radius-sm:   6px;
@@ -28,7 +28,6 @@ $shadow-xl:   0 16px 56px rgba(26,58,92,0.22);
 .ads {
   font-family: 'Be Vietnam Pro', sans-serif;
   background: $bg-page;
-  min-height: 100vh;
   padding: 2rem 2.5rem 4rem;
   color: $text-main;
 }

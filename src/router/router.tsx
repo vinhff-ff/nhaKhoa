@@ -1,7 +1,7 @@
 import { lazy } from "react";
 import BaseUrl from "./path";
 import MainLayout from "../components/layout/mainLayout";
-import MainLayoutAdmin from "../admin/layout";
+import MainLayoutAdmin from "../admin/layout/index";
 
 const HomePage = lazy(() => import("../page/TrangChu/index"));
 const Login = lazy(() => import("../page/Login/index"));
@@ -13,10 +13,14 @@ const Contact = lazy(() => import("../page/Contact/index"));
 const ThietBi = lazy(() => import("../page/ThietBiDetails/index"));
 const MySche = lazy(() => import("../page/QuanLiLichDat/index"));
 
+const AdminChung = lazy(() => import("../admin/layout/admin"));
+
 const TrangChuAdmin = lazy(() => import("../admin/page/Admin/TrangChu"));
 const CRUDBacSi = lazy(() => import("../admin/page/Admin/CRUDdoctor"));
 const ContactInfor = lazy(() => import("../admin/page/Admin/ContactInfor"));
 const BannerAdmin = lazy(() => import("../admin/page/Admin/BannerAdmin"));
+const NhanVienAdmin = lazy(() => import("../admin/page/Admin/CRUDNhanVien"));
+const LichDat = lazy(() => import("../admin/page/components/lichDat"));
 
 const BacSiLich = lazy(() => import("../admin/page/ManBacSi/quanLiLich"));
 const BacSiThongKe = lazy(() => import("../admin/page/ManBacSi/thongKe"));
@@ -30,6 +34,7 @@ export interface AppRoute {
   icon?: React.ReactNode;
 }
 const routes = [
+  // user
   {
     name: "Trang chủ",
     path: BaseUrl.Home,
@@ -106,6 +111,16 @@ const routes = [
     icon: null,
   },
 
+  // admin
+  {
+    name: null,
+    path: BaseUrl.AdminChung,
+    component: AdminChung,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: false,
+    icon: null,
+  },
 
   {
     name: null,
@@ -143,6 +158,28 @@ const routes = [
     private: false,
     icon: null,
   },
+  {
+    name: null,
+    path: BaseUrl.NhanVienAdmin,
+    component: NhanVienAdmin,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: false,
+    icon: null,
+  },
+  {
+    name: null,
+    path: BaseUrl.LichDat,
+    component: LichDat,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: false,
+    icon: null,
+  },
+
+
+
+
 
 
 

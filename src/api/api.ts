@@ -10,10 +10,7 @@ export async function getHanoiTemperature(): Promise<number> {
   return tempC;
 }
 
-export const getProfile = async () => {
-  const res = await axiosInstance.get("/user/profile");
-  return res.data;
-};
+
 
 export const viewProduct = async () => {
   const res = await axiosInstance.get("/product/viewproduct");
@@ -121,5 +118,21 @@ export const deleteEmployee = async (id: number) => {
   const res = await axiosInstance.post(
     `/employee/delete/${id}`
   );
+  return res.data;
+};
+
+
+
+
+// mới
+
+// dùng chung
+export const getProfile = async () => {
+  const res = await axiosInstance.get("/user/profile");
+  return res.data;
+};
+
+export const getLich = async () => {
+  const res = await axiosInstance.get("/appointments");
   return res.data;
 };

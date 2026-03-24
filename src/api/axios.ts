@@ -40,25 +40,25 @@ axiosInstance.interceptors.response.use(
 
     switch (status) {
       case 400:
-        message.error("Lỗi hệ thống");
+        // message.error("Lỗi hệ thống");
         break;
 
       case 401:
         // localStorage.clear();
-        message.error("Phiên đăng nhập hết hạn");
+        // message.error("Phiên đăng nhập hết hạn");
         // window.location.href = "/";
         break;
 
       case 404:
-        message.error("Resource not found.");
+        // message.error("Resource not found.");
         break;
 
       case 422:
-        message.error(data?.message);
+        // message.error(data?.message);
         break;
 
       case 500:
-        message.error("Server error. Please try again later.");
+        // message.error("Server error. Please try again later.");
         break;
 
       default:

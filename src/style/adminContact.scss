@@ -405,6 +405,7 @@ $shadow-xl:   0 16px 56px rgba(26,58,92,0.22);
 }
 
 .adc-modal {
+
   background: $bg-white;
   border-radius: $radius-lg;
   box-shadow: $shadow-xl;
@@ -544,6 +545,7 @@ $shadow-xl:   0 16px 56px rgba(26,58,92,0.22);
 
 
 .adc-confirm {
+
   &__icon {
     width: 52px; height: 52px;
     background: $danger-pale;
@@ -575,6 +577,7 @@ $shadow-xl:   0 16px 56px rgba(26,58,92,0.22);
 }
 
 .adc-modal--confirm .adc-modal__body {
+
   display: flex;
   flex-direction: column;
   align-items: stretch;

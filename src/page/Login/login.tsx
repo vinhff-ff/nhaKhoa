@@ -25,10 +25,9 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
 
     try {
       setLoading(true);
-      const loginRes = await authLogin({
-        gmail,
-        password,
-      });
+
+      const loginRes = await authLogin({ gmail, password });
+
 
       if (loginRes.satus !== 200) {
         message.error(loginRes.message || "Đăng nhập thất bại");
@@ -40,20 +39,30 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
 
       const profileRes = await getProfile();
 
-      if (profileRes.satus === 200) {
-        localStorage.setItem(
-          "user_profile",
-          JSON.stringify(profileRes.data)
-        );
+      if (profileRes.status !== "success") {
+        message.error("Không thể lấy thông tin người dùng");
+        return;
       }
+
+      localStorage.setItem("user_profile", JSON.stringify(profileRes.data));
+
+      const role = profileRes.data.role;
+
+      if (role === "CUSTOMER") {
+        message.success("Đăng nhập thành công");
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("user_profile");
+        window.location.href = "/";
+        return;
+      }
+
       message.success("Đăng nhập thành công");
+
       if (router) {
         navigate(`/admin`);
       } else {
-        window.location.href = "/"
+        window.location.href = "/";
       }
-
-
     } catch (error: any) {
       message.error(
         error?.response?.data?.message || "Đăng nhập thất bại"
@@ -91,9 +100,10 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
         disabled={loading}
         className="auth__btn"
       />
-      <p style={{ textAlign: 'end', fontSize: '14px', color:"#555", marginTop:'-12px' }}><span>Quên mật khẩu?</span></p>
+      <p style={{ textAlign: "end", fontSize: "14px", color: "#555", marginTop: "-12px" }}>
+        <span>Quên mật khẩu?</span>
+      </p>
       <div className="auth__footer">
-
         <span>Bạn chưa có tài khoản?</span>
         <span className="auth__link" onClick={onRegister}>
           Đăng kí

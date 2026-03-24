@@ -1,5 +1,5 @@
-import React from "react";
-import { Card, Col, Row, Progress, Badge } from "antd";
+import React, { useEffect, useState } from "react";
+import { Card, Col, Row, Progress, Spin } from "antd";
 import {
   CalendarOutlined,
   CheckCircleOutlined,
@@ -23,121 +23,59 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
+import { bieuDoTron, phanBoDoTuoi, thongKeTQ } from "../../../api/admin";
 
-const statCards = [
-  {
-    key: "booked",
-    label: "Bệnh nhân đã đặt lịch",
-    value: 11,
-    trend: "+3",
-    trendUp: true,
-    icon: <CalendarOutlined />,
-    color: "#2e7d32",
-    bg: "#e8f5e9",
-  },
-  {
-    key: "pending",
-    label: "Cần xác nhận",
-    value: 9,
-    trend: "+2",
-    trendUp: true,
-    icon: <ClockCircleOutlined />,
-    color: "#f9a825",
-    bg: "#fffde7",
-  },
-  {
-    key: "done",
-    label: "Lịch khám đã hoàn thành",
-    value: 16,
-    trend: "+5",
-    trendUp: true,
-    icon: <CheckCircleOutlined />,
-    color: "#1565c0",
-    bg: "#e3f2fd",
-  },
-  {
-    key: "cancelled",
-    label: "Lịch hẹn hủy",
-    value: 11,
-    trend: "-2",
-    trendUp: false,
-    icon: <CloseCircleOutlined />,
-    color: "#c62828",
-    bg: "#ffebee",
-  },
-];
+// ─── Types ────────────────────────────────────────────────────
+interface BarItem {
+  month: number;
+  total: number;
+  confirmed: number;
+  pending: number;
+  cancelled: number;
+}
 
-const infoCards = [
-  {
-    key: "doctor",
-    label: "Bác sĩ đang hoạt động",
-    value: 24,
-    sub: "8 bác sĩ trực hôm nay",
-    icon: <MedicineBoxOutlined />,
-    color: "#7b1fa2",
-    bg: "#f3e5f5",
-  },
-  {
-    key: "patient",
-    label: "Tổng bệnh nhân",
-    value: 1240,
-    sub: "↑ 12% so với tháng trước",
-    icon: <UserOutlined />,
-    color: "#00695c",
-    bg: "#e0f2f1",
-  },
-  {
-    key: "revenue",
-    label: "Doanh thu tháng",
-    value: "142M",
-    sub: "Mục tiêu: 200M",
-    icon: <CheckCircleOutlined />,
-    color: "#e65100",
-    bg: "#fff3e0",
-  },
-  {
-    key: "rate",
-    label: "Tỷ lệ hài lòng",
-    value: "94%",
-    sub: "↑ 2% so với tháng trước",
-    icon: <CheckCircleOutlined />,
-    color: "#1565c0",
-    bg: "#e3f2fd",
-  },
-];
+interface PieItem {
+  status: string;
+  total: number;
+  percentage: number;
+}
 
-const ageData = [
-  { label: "Dưới 14 tuổi", pct: 9.1 },
-  { label: "Từ 15 – 35 tuổi", pct: 72.7 },
-  { label: "Từ 36 – 64 tuổi", pct: 18.2 },
-  { label: "Từ 65 tuổi", pct: 0 },
-];
+interface AgeItem {
+  ageGroup: string;
+  total: number;
+  percentage: number;
+}
 
-const pieData = [
-  { name: "Đã đặt lịch", value: 30, color: "#f5e27a" },
-  { name: "Hoàn thành", value: 44, color: "#64b5f6" },
-  { name: "Đã hủy", value: 26, color: "#f48fb1" },
-];
+interface Overview {
+  totalBooked: number;
+  totalBookedChange: number;
+  totalPending: number;
+  totalPendingChange: number;
+  totalConfirmed: number;
+  totalConfirmedChange: number;
+  totalCancelled: number;
+  totalCancelledChange: number;
+  totalDoctors: number;
+  totalCustomers: number;
+}
 
-const barData = [
-  { month: "T1", booked: 40, done: 30, cancelled: 8 },
-  { month: "T2", booked: 52, done: 45, cancelled: 10 },
-  { month: "T3", booked: 61, done: 55, cancelled: 7 },
-  { month: "T4", booked: 48, done: 40, cancelled: 12 },
-  { month: "T5", booked: 70, done: 63, cancelled: 9 },
-  { month: "T6", booked: 65, done: 58, cancelled: 11 },
-  { month: "T7", booked: 80, done: 72, cancelled: 6 },
-  { month: "T8", booked: 74, done: 67, cancelled: 8 },
-  { month: "T9", booked: 90, done: 82, cancelled: 10 },
-  { month: "T10", booked: 85, done: 77, cancelled: 7 },
-  { month: "T11", booked: 95, done: 88, cancelled: 9 },
-  { month: "T12", booked: 110, done: 100, cancelled: 11 },
-];
+// ─── Helpers ──────────────────────────────────────────────────
+const MONTH_LABEL = ["T1","T2","T3","T4","T5","T6","T7","T8","T9","T10","T11","T12"];
+
+const PIE_COLOR_MAP: Record<string, string> = {
+  CONFIRMED: "#64b5f6",
+  PENDING:   "#f5e27a",
+  CANCELLED: "#f48fb1",
+};
+
+const PIE_LABEL_MAP: Record<string, string> = {
+  CONFIRMED: "Đã xác nhận",
+  PENDING:   "Chờ xác nhận",
+  CANCELLED: "Đã hủy",
+};
 
 const RADIAN = Math.PI / 180;
-const renderCustomLabel = ({
-  cx, cy, midAngle, innerRadius, outerRadius, percent,
-}: any) => {
+const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
   const r = innerRadius + (outerRadius - innerRadius) * 0.55;
   const x = cx + r * Math.cos(-midAngle * RADIAN);
   const y = cy + r * Math.sin(-midAngle * RADIAN);
@@ -149,12 +87,141 @@ const renderCustomLabel = ({
   );
 };
 
+const trendLabel = (change: number) => {
+  const sign = change >= 0 ? "+" : "";
+  return `${sign}${change.toFixed(0)}% so với tháng trước`;
+};
+
 // ─── Component ───────────────────────────────────────────────
 const TrangChu: React.FC = () => {
+  const [overview, setOverview]   = useState<Overview | null>(null);
+  const [pieList, setPieList]     = useState<PieItem[]>([]);
+  const [ageList, setAgeList]     = useState<AgeItem[]>([]);
+  const [barList, setBarList]     = useState<BarItem[]>([]);
+  const [loading, setLoading]     = useState(true);
+
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        setLoading(true);
+        const [overviewRes, pieRes, ageRes] = await Promise.all([
+          thongKeTQ(),
+          bieuDoTron(),
+          phanBoDoTuoi(),
+        ]);
+        setOverview(overviewRes);
+        setPieList(pieRes);
+        setAgeList(ageRes);
+        // bieuDoTron trả về mảng theo tháng — dùng luôn cho bar chart
+        // Nếu backend có API riêng cho bar chart thì thay ở đây
+        setBarList(pieRes.length ? overviewRes._barData ?? [] : []);
+      } catch (err) {
+        console.error("Lỗi tải dữ liệu dashboard:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAll();
+  }, []);
+
+  // ── Stat cards từ overview ──
+  const statCards = overview
+    ? [
+        {
+          key: "booked",
+          label: "Bệnh nhân đã đặt lịch",
+          value: overview.totalBooked,
+          trend: trendLabel(overview.totalBookedChange),
+          trendUp: overview.totalBookedChange >= 0,
+          icon: <CalendarOutlined />,
+          color: "#2e7d32",
+          bg: "#e8f5e9",
+        },
+        {
+          key: "pending",
+          label: "Cần xác nhận",
+          value: overview.totalPending,
+          trend: trendLabel(overview.totalPendingChange),
+          trendUp: overview.totalPendingChange >= 0,
+          icon: <ClockCircleOutlined />,
+          color: "#f9a825",
+          bg: "#fffde7",
+        },
+        {
+          key: "confirmed",
+          label: "Lịch khám đã xác nhận",
+          value: overview.totalConfirmed,
+          trend: trendLabel(overview.totalConfirmedChange),
+          trendUp: overview.totalConfirmedChange >= 0,
+          icon: <CheckCircleOutlined />,
+          color: "#1565c0",
+          bg: "#e3f2fd",
+        },
+        {
+          key: "cancelled",
+          label: "Lịch hẹn hủy",
+          value: overview.totalCancelled,
+          trend: trendLabel(overview.totalCancelledChange),
+          trendUp: overview.totalCancelledChange >= 0,
+          icon: <CloseCircleOutlined />,
+          color: "#c62828",
+          bg: "#ffebee",
+        },
+      ]
+    : [];
+
+  // ── Info cards từ overview ──
+  const infoCards = overview
+    ? [
+        {
+          key: "doctor",
+          label: "Bác sĩ đang hoạt động",
+          value: overview.totalDoctors,
+          sub: "Tổng số bác sĩ trong hệ thống",
+          icon: <MedicineBoxOutlined />,
+          color: "#7b1fa2",
+          bg: "#f3e5f5",
+        },
+        {
+          key: "patient",
+          label: "Tổng bệnh nhân",
+          value: overview.totalCustomers,
+          sub: "Tổng số khách hàng đã đăng ký",
+          icon: <UserOutlined />,
+          color: "#00695c",
+          bg: "#e0f2f1",
+        },
+      ]
+    : [];
+
+  // ── Bar chart data: map month số → label ──
+  const barChartData = barList.map((item) => ({
+    month: MONTH_LABEL[(item.month ?? 1) - 1] ?? `T${item.month}`,
+    booked: item.total,
+    confirmed: item.confirmed,
+    cancelled: item.cancelled,
+    pending: item.pending,
+  }));
+
+  // ── Pie chart data ──
+  const pieChartData = pieList.map((item) => ({
+    name:  PIE_LABEL_MAP[item.status] ?? item.status,
+    value: item.percentage,
+    color: PIE_COLOR_MAP[item.status] ?? "#90a4ae",
+  }));
+
+  if (loading) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: 400 }}>
+        <Spin size="large" tip="Đang tải dữ liệu..." />
+      </div>
+    );
+  }
+
   return (
     <div className="trangchu">
 
-      {/* ── ROW 1: 4 stat cards (column layout inside each card) ── */}
+      {/* ── ROW 1: 4 stat cards ── */}
       <Row gutter={[16, 16]} className="trangchu__stat-row">
         {statCards.map((c) => (
           <Col xs={24} sm={12} lg={6} key={c.key}>
@@ -166,14 +233,14 @@ const TrangChu: React.FC = () => {
               <div className="stat-value" style={{ color: c.color }}>{c.value}</div>
               <div className={`stat-trend ${c.trendUp ? "up" : "down"}`}>
                 {c.trendUp ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-                <span>{c.trend} so với hôm qua</span>
+                <span>{c.trend}</span>
               </div>
             </Card>
           </Col>
         ))}
       </Row>
 
-      {/* ── ROW 2: 4 info cards (flex horizontal inside each card) ── */}
+      {/* ── ROW 2: info cards ── */}
       <Row gutter={[16, 16]} className="trangchu__info-row">
         {infoCards.map((c) => (
           <Col xs={24} sm={12} lg={6} key={c.key}>
@@ -202,14 +269,14 @@ const TrangChu: React.FC = () => {
             title={<span className="chart-title">Phân bố độ tuổi bệnh nhân</span>}
           >
             <div className="age-list">
-              {ageData.map((a) => (
-                <div className="age-item" key={a.label}>
+              {ageList.map((a) => (
+                <div className="age-item" key={a.ageGroup}>
                   <div className="age-header">
-                    <span className="age-label">{a.label}</span>
-                    <span className="age-pct">{a.pct}%</span>
+                    <span className="age-label">{a.ageGroup}</span>
+                    <span className="age-pct">{a.percentage.toFixed(1)}%</span>
                   </div>
                   <Progress
-                    percent={a.pct}
+                    percent={a.percentage}
                     showInfo={false}
                     strokeColor="#1565c0"
                     trailColor="#e8eef8"
@@ -221,7 +288,7 @@ const TrangChu: React.FC = () => {
           </Card>
         </Col>
 
-        {/* Card 2: Tỷ lệ trạng thái */}
+        {/* Card 2: Tỷ lệ trạng thái (Pie) */}
         <Col xs={24} md={8}>
           <Card
             className="trangchu__chart-card"
@@ -232,7 +299,7 @@ const TrangChu: React.FC = () => {
               <ResponsiveContainer width="100%" height={180}>
                 <PieChart>
                   <Pie
-                    data={pieData}
+                    data={pieChartData}
                     cx="50%"
                     cy="50%"
                     outerRadius={80}
@@ -240,7 +307,7 @@ const TrangChu: React.FC = () => {
                     labelLine={false}
                     label={renderCustomLabel}
                   >
-                    {pieData.map((entry, i) => (
+                    {pieChartData.map((entry, i) => (
                       <Cell key={i} fill={entry.color} />
                     ))}
                   </Pie>
@@ -249,7 +316,7 @@ const TrangChu: React.FC = () => {
               </ResponsiveContainer>
 
               <div className="pie-legend">
-                {pieData.map((d) => (
+                {pieChartData.map((d) => (
                   <div className="legend-item" key={d.name}>
                     <span className="legend-dot" style={{ background: d.color }} />
                     <span>{d.name}</span>
@@ -268,28 +335,51 @@ const TrangChu: React.FC = () => {
             bordered={false}
             title={<span className="chart-title">Thống kê lịch hẹn theo tháng</span>}
           >
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={barData} margin={{ top: 4, right: 4, left: -18, bottom: 0 }} barSize={6}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#90a4ae" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: "#90a4ae" }} axisLine={false} tickLine={false} />
-                <Tooltip
-                  contentStyle={{ borderRadius: 8, border: "0.5px solid #e0e0e0", fontSize: 12 }}
-                  cursor={{ fill: "rgba(0,0,0,0.03)" }}
-                />
-                <Legend
-                  iconType="square"
-                  iconSize={9}
-                  wrapperStyle={{ fontSize: 11, paddingTop: 8 }}
-                  formatter={(v) =>
-                    v === "booked" ? "Đã đặt" : v === "done" ? "Hoàn thành" : "Đã hủy"
-                  }
-                />
-                <Bar dataKey="booked" fill="#64b5f6" radius={[3, 3, 0, 0]} />
-                <Bar dataKey="done" fill="#81c784" radius={[3, 3, 0, 0]} />
-                <Bar dataKey="cancelled" fill="#f48fb1" radius={[3, 3, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            {barChartData.length === 0 ? (
+              <div style={{ textAlign: "center", color: "#90a4ae", padding: "40px 0" }}>
+                Chưa có dữ liệu
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={240}>
+                <BarChart
+                  data={barChartData}
+                  margin={{ top: 4, right: 4, left: -18, bottom: 0 }}
+                  barSize={6}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+                  <XAxis
+                    dataKey="month"
+                    tick={{ fontSize: 11, fill: "#90a4ae" }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    tick={{ fontSize: 11, fill: "#90a4ae" }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <Tooltip
+                    contentStyle={{ borderRadius: 8, border: "0.5px solid #e0e0e0", fontSize: 12 }}
+                    cursor={{ fill: "rgba(0,0,0,0.03)" }}
+                  />
+                  <Legend
+                    iconType="square"
+                    iconSize={9}
+                    wrapperStyle={{ fontSize: 11, paddingTop: 8 }}
+                    formatter={(v) =>
+                      v === "booked"    ? "Tổng đặt"      :
+                      v === "confirmed" ? "Đã xác nhận"   :
+                      v === "pending"   ? "Chờ xác nhận"  :
+                                         "Đã hủy"
+                    }
+                  />
+                  <Bar dataKey="booked"    fill="#64b5f6" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="confirmed" fill="#81c784" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="pending"   fill="#f5e27a" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="cancelled" fill="#f48fb1" radius={[3, 3, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </Card>
         </Col>
 

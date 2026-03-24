@@ -1,0 +1,317 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap');
+
+// --- Variables ---
+$navy:        #1a3a5c;
+$navy-dark:   #112845;
+$navy-pale:   #d6e8f5;
+$accent:      #2e7d9c;
+$accent-pale: #e0f2f9;
+$gold:        #c49a3c;
+$danger:      #c0392b;
+$danger-pale: #fdecea;
+$success:     #1a7a4a;
+$text-main:   #1c2b3a;
+$text-muted:  #5a6e7f;
+$text-light:  #8fa3b3;
+$bg-page:     #fff;
+$bg-white:    #ffffff;
+$border:      #dde5ec;
+$radius-sm:   6px;
+$radius-md:   10px;
+$radius-lg:   14px;
+$shadow-sm:   0 1px 6px rgba(26,58,92,0.07);
+$shadow-md:   0 6px 24px rgba(26,58,92,0.13);
+$shadow-xl:   0 16px 56px rgba(26,58,92,0.22);
+
+// --- Base ---
+.adm {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  background: $bg-page;
+  min-height: 100vh;
+  padding: 2rem 2.5rem 4rem;
+  color: $text-main;
+}
+
+// --- Header ---
+.adm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+
+  &__left {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  &__title {
+    font-family: 'Lora', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: $navy;
+    margin: 0;
+  }
+
+  &__count {
+    font-size: 11px;
+    font-weight: 600;
+    color: $accent;
+    background: $accent-pale;
+    padding: 2px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+  }
+}
+
+// --- Toolbar & Search ---
+.adm-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 1.25rem;
+
+  &__result {
+    font-size: 12px;
+    color: $text-light;
+  }
+}
+
+.adm-search {
+  flex: 1;
+  max-width: 400px;
+  
+  &__input {
+    width: 100%;
+    height: 40px;
+    padding: 0 16px;
+    border: 1px solid $border;
+    border-radius: $radius-md;
+    font-size: 13.5px;
+    transition: all 0.2s;
+    outline: none;
+
+    &:focus {
+      border-color: $accent;
+      box-shadow: 0 0 0 3px rgba($accent, 0.1);
+    }
+  }
+}
+
+// --- Table Design ---
+.adm-table-wrap {
+  background: $bg-white;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+}
+
+.adm-table {
+  width: 100%;
+  border-collapse: collapse;
+  
+  th {
+    background: #f8fafc;
+    padding: 14px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid $border;
+  }
+
+  td {
+    padding: 14px;
+    border-bottom: 1px solid $border;
+    font-size: 13.5px;
+    vertical-align: middle;
+  }
+
+  &__row {
+    &:hover { background: #fcfdfe; }
+    &:last-child td { border-bottom: none; }
+  }
+
+  &__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: $navy-pale;
+  }
+
+  &__name {
+    font-weight: 600;
+    color: $navy;
+  }
+
+  &__empty {
+    padding: 3rem;
+    text-align: center;
+    color: $text-light;
+  }
+}
+
+// --- Buttons & Actions ---
+.adm-btn {
+  height: 40px;
+  padding: 0 20px;
+  border-radius: $radius-md;
+  font-weight: 600;
+  font-size: 13.5px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+
+  &--primary {
+    background: $navy;
+    color: white;
+    &:hover { background: $navy-dark; transform: translateY(-1px); }
+  }
+
+  &--ghost {
+    background: white;
+    border-color: $border;
+    color: $text-muted;
+    &:hover { background: $bg-page; }
+  }
+
+  &--danger {
+    background: $danger;
+    color: white;
+    &:hover { background: darken($danger, 5%); }
+  }
+}
+
+.adm-actions {
+  display: flex;
+  gap: 8px;
+
+  &__btn {
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-sm;
+    border: 1px solid $border;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+
+    &:hover { border-color: $navy; background: $navy-pale; }
+    
+    &--delete:hover { border-color: $danger; background: $danger-pale; }
+  }
+}
+
+// --- Modal & Overlay ---
+.adm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba($navy-dark, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.adm-modal {
+  background: white;
+  border-radius: $radius-lg;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: $shadow-xl;
+  overflow: hidden;
+  animation: modalIn 0.3s ease;
+
+  &__header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid $border;
+    h2 { font-family: 'Lora', serif; font-size: 18px; margin: 0; color: $navy; }
+  }
+
+  &__body {
+    padding: 1.5rem;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  &__footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid $border;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+}
+
+// --- Form Fields ---
+.adm-field {
+  margin-bottom: 16px;
+  
+  label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: $text-muted;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    span { color: $danger; }
+  }
+
+  input, select, textarea {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid $border;
+    border-radius: $radius-md;
+    font-family: inherit;
+    font-size: 14px;
+    background: #fcfdfe;
+
+    &:focus { outline: none; border-color: $accent; background: white; }
+  }
+
+  select { cursor: pointer; }
+}
+
+// --- View Detail Specifics ---
+.adm-modal__body b {
+  color: $navy;
+  display: inline-block;
+  width: 110px;
+  font-size: 13px;
+}
+
+.adm-modal__body p {
+  margin-bottom: 10px;
+  border-bottom: 1px dashed $border;
+  padding-bottom: 8px;
+  color: $text-main;
+  &:last-child { border-bottom: none; }
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+// --- Mobile Responsive ---
+@media (max-width: 768px) {
+  .adm { padding: 1rem; }
+  .adm-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .adm-table {
+    th:nth-child(4), td:nth-child(4), // Giấu giới tính
+    th:nth-child(6), td:nth-child(6)  // Giấu SĐT
+    { display: none; }
+  }
+}
