@@ -1,7 +1,7 @@
 const BaseUrl = {
   //user
   Home: `/`,
-  Profile: `profile`,
+  Profile: `/profile`,
   Login: `/login`,
   OrderKham: `/order-lich-kham`,
   Contact: `/contact`,
@@ -22,6 +22,7 @@ const BaseUrl = {
   //bác sĩ
   BacSiLich: '/bac-si-quan-li-lich',
   BacSiThongKe: '/bac-si-thong-ke',
-  
+  // nhân viên
+  NVPLBS: '/phan-lich-bac-si',
 };
 export default BaseUrl;

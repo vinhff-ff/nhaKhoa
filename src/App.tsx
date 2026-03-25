@@ -6,6 +6,7 @@ import routes from "./router/router";
 import NProgressHandler from "./components/custom/NProgress";
 import LoadingOverlay from "./components/custom/loading";
 import PrivateRoute from "./router/private";
+import FloatingChatBubble from "./components/custom/FloatingChatBubble";
 
 const App = () => {
   return (
@@ -43,6 +44,7 @@ const App = () => {
           );
         })}
       </Routes>
+      <FloatingChatBubble />
     </Router>
   );
 };

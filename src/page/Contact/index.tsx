@@ -1,8 +1,34 @@
+import { useState } from "react";
 import CommonInput from "../../components/custom/input";
 import ButtonCustom from "../../components/custom/button";
 import { MailOutlined, PhoneOutlined } from "@ant-design/icons";
+import { taoTN } from "../../api/api";
 
 const Contact = () => {
+  const [form, setForm] = useState({ name: "", gmail: "", text: "" });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async () => {
+    if (!form.name.trim() || !form.gmail.trim() || !form.text.trim()) {
+      setError("Vui lòng điền đầy đủ thông tin.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      await taoTN(form);
+      setSuccess(true);
+      setForm({ name: "", gmail: "", text: "" });
+      setTimeout(() => setSuccess(false), 3000);
+    } catch (err) {
+      setError("Gửi thất bại, vui lòng thử lại.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="contactContainer">
       <div className="contactWrapper">
@@ -14,32 +40,56 @@ const Contact = () => {
             height="100%"
             style={{ border: 0 }}
             loading="lazy"
-          ></iframe>
+          />
         </div>
 
         <div className="contactForm">
-
           <h2>Liên hệ với chúng tôi</h2>
 
           <div className="formGroup">
-            <CommonInput placeholder="Họ và tên" />
+            <CommonInput
+              placeholder="Họ và tên"
+              value={form.name}
+              onChange={(e: any) => setForm(f => ({ ...f, name: e.target.value }))}
+            />
           </div>
 
           <div className="formGroup">
-            <CommonInput placeholder="Email hoặc Số điện thoại" />
+            <CommonInput
+              placeholder="Email"
+              value={form.gmail}
+              onChange={(e: any) => setForm(f => ({ ...f, gmail: e.target.value }))}
+            />
           </div>
 
           <div className="formGroup">
             <textarea
               className="textArea"
               placeholder="Nhập nội dung cần tư vấn..."
+              value={form.text}
+              onChange={(e) => setForm(f => ({ ...f, text: e.target.value }))}
             />
           </div>
 
-          <ButtonCustom text="Gửi thông tin" />
+          {error && (
+            <p style={{ color: "#e53935", fontSize: 13, marginBottom: 8 }}>
+              {error}
+            </p>
+          )}
+
+          {success && (
+            <p style={{ color: "#2e7d32", fontSize: 13, marginBottom: 8 }}>
+              ✓ Gửi thông tin thành công!
+            </p>
+          )}
+
+          <ButtonCustom
+            text={loading ? "Đang gửi..." : "Gửi thông tin"}
+            onClick={handleSubmit}
+            disabled={loading}
+          />
 
           <div className="contactInfo">
-
             <div className="infoCard">
               <MailOutlined className="icon" />
               <div>
@@ -55,9 +105,9 @@ const Contact = () => {
                 <p>0988 888 888</p>
               </div>
             </div>
-
           </div>
         </div>
+
       </div>
     </div>
   );

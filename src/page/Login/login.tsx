@@ -50,8 +50,6 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
 
       if (role === "CUSTOMER") {
         message.success("Đăng nhập thành công");
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("user_profile");
         window.location.href = "/";
         return;
       }
@@ -79,7 +77,7 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
       <div className="auth__field">
         <input
           type="email"
-          placeholder="Email"
+          placeholder="Số điện thoại"
           value={gmail}
           onChange={(e) => setUsername(e.target.value)}
         />

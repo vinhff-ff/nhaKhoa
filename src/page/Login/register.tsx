@@ -13,13 +13,12 @@ const Register: React.FC<RegisterProps> = ({
   onBackToLogin,
 }) => {
   const [username, setUsername] = useState("");
-  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
-    if (!username || !phone || !password || !confirmPassword) {
+    if (!username || !password || !confirmPassword) {
       message.warning("Vui lòng nhập đầy đủ thông tin");
       return;
     }
@@ -34,7 +33,6 @@ const Register: React.FC<RegisterProps> = ({
 
       const body = {
         gmail: username,
-        phone: phone,
         password: password,
       };
 
@@ -56,19 +54,19 @@ const Register: React.FC<RegisterProps> = ({
       <div className="auth__field">
         <input
           type="email"
-          placeholder="Email"
+          placeholder="Số điện thoại"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
       </div>
-      <div className="auth__field">
+      {/* <div className="auth__field">
         <input
           type="text"
           placeholder="Số điện thoại"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
         />
-      </div>
+      </div> */}
       <div className="auth__field">
         <input
           type="password"

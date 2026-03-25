@@ -1,0 +1,41 @@
+$navy:        #1a3a5c;
+$navy-dark:   #112845;
+$accent:      #2e7d9c;
+$bg-white:    #ffffff;
+$shadow-md:   0 8px 32px rgba(26,58,92,0.13);
+
+.floating-chat-bubble {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $navy 0%, $accent 100%);
+  box-shadow: 0 4px 16px rgba(26, 58, 92, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: $bg-white;
+  font-size: 24px;
+  transition: all 0.15s;
+  z-index: 998;
+  border: none;
+
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 24px rgba(26, 58, 92, 0.35);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  @media (max-width: 768px) {
+    width: 52px;
+    height: 52px;
+    bottom: 16px;
+    right: 16px;
+  }
+}

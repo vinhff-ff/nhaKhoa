@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import Logo from "../../../assets/logo.png";
-import { DownOutlined, MenuOutlined } from "@ant-design/icons";
-import { Drawer } from "antd";
+import { DownOutlined, MenuOutlined, UserOutlined, CalendarOutlined, LogoutOutlined } from "@ant-design/icons";
+import { Drawer, Dropdown } from "antd";
+import type { MenuProps } from "antd";
 import ButtonCustom from "../../custom/button";
-import UserSidebar from "../../custom/menu_user";
 import { useNavigate, useLocation } from "react-router-dom";
 import routes from "../../../router/router";
 
@@ -14,10 +14,7 @@ const HeaderCustom = () => {
   const token = localStorage.getItem("access_token");
 
   const [profile, setProfile] = useState<any>(null);
-  const [isOpenUserDropdown, setIsOpenUserDropdown] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
-
-  const userRef = useRef<HTMLDivElement>(null);
 
   const menuRoutes = routes.filter((r) => r.showInMenu && r.name);
 
@@ -26,21 +23,38 @@ const HeaderCustom = () => {
     if (storedProfile) {
       try {
         setProfile(JSON.parse(storedProfile));
-      } catch {}
+      } catch { }
     }
   }, [token]);
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (userRef.current && !userRef.current.contains(e.target as Node)) {
-        setIsOpenUserDropdown(false);
-      }
-    };
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("user_profile");
+    navigate("/login");
+  };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const dropdownItems: MenuProps["items"] = [
+    {
+      key: "profile",
+      icon: <UserOutlined />,
+      label: "Thông tin cá nhân",
+      onClick: () => navigate("/profile"),
+    },
+    {
+      key: "appointments",
+      icon: <CalendarOutlined />,
+      label: "Lịch khám của tôi",
+      onClick: () => navigate("/lich-cua-toi"),
+    },
+    { type: "divider" },
+    {
+      key: "logout",
+      icon: <LogoutOutlined />,
+      label: "Đăng xuất",
+      danger: true,
+      onClick: handleLogout,
+    },
+  ];
 
   return (
     <>
@@ -51,7 +65,6 @@ const HeaderCustom = () => {
             <div className="menu-mobile" onClick={() => setOpenDrawer(true)}>
               <MenuOutlined />
             </div>
-
             <img
               src={Logo}
               alt="logo"
@@ -61,48 +74,39 @@ const HeaderCustom = () => {
           </div>
 
           <div className="header-right">
-
             <div className="header-menu">
               {menuRoutes.map((item) => (
                 <div
                   key={item.path}
-                  className={`menu-item ${
-                    location.pathname === item.path ? "active" : ""
-                  }`}
+                  className={`menu-item ${location.pathname === item.path ? "active" : ""}`}
                   onClick={() => navigate(item.path)}
                 >
                   {item.name}
                 </div>
               ))}
+              <ButtonCustom
+                text="Đặt lịch khám"
+                onClick={() => navigate("/order-lich-kham")}
+              />
             </div>
 
-            <div className="user" ref={userRef}>
+            <div className="user">
               {token ? (
-                <>
-                  <div
-                    className="user-trigger"
-                    onClick={() =>
-                      setIsOpenUserDropdown((prev) => !prev)
-                    }
-                  >
+                <Dropdown
+                  menu={{ items: dropdownItems }}
+                  trigger={["click"]}
+                  placement="bottomRight"
+                >
+                  <div className="user-trigger" style={{ cursor: "pointer" }}>
                     <p>
-                      Chào <strong>{profile?.name}</strong>{" "}
+                      Chào <strong>{profile?.name ?? "bạn"}</strong>{" "}
                       <DownOutlined style={{ fontSize: 13 }} />
                     </p>
                   </div>
+                </Dropdown>
 
-                  {isOpenUserDropdown && (
-                    <div className="user-dropdown">
-                      <UserSidebar />
-                    </div>
-                  )}
-                </>
               ) : (
                 <div className="active-btn-header">
-                  <ButtonCustom
-                    text="Đặt lịch khám"
-                    onClick={() => navigate("/order-lich-kham")}
-                  />
                   <ButtonCustom
                     text="Đăng nhập"
                     onClick={() => navigate("/login")}
@@ -126,9 +130,7 @@ const HeaderCustom = () => {
           {menuRoutes.map((item) => (
             <div
               key={item.path}
-              className={`drawer-item ${
-                location.pathname === item.path ? "active" : ""
-              }`}
+              className={`drawer-item ${location.pathname === item.path ? "active" : ""}`}
               onClick={() => {
                 navigate(item.path);
                 setOpenDrawer(false);

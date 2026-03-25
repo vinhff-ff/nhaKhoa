@@ -8,8 +8,6 @@ import {
   TeamOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  BellOutlined,
-  SettingOutlined,
   LogoutOutlined,
   PhoneOutlined,
   PictureOutlined,
@@ -29,8 +27,6 @@ import {
   Menu,
   theme,
   Avatar,
-  Badge,
-  Tooltip,
   Dropdown,
 } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -56,7 +52,7 @@ const ALL_ROUTES: RouteConfig[] = [
     icon: <HomeOutlined />,
     roles: ["ADMIN", 'DOCTOR', 'EMPLOYEE'],
   },
-  // ─── ADMIN ───────────────────────────────────────────────
+  // ─── ADMIN
   {
     key: "adminTrangChu",
     path: "/trang-chu-admin",
@@ -100,44 +96,16 @@ const ALL_ROUTES: RouteConfig[] = [
     roles: ["ADMIN"],
   },
 
-  // ─── EMPLOYEE ────────────────────────────────────────────
+  // ─── EMPLOYEE 
   {
     key: "employeeTrangChu",
-    path: "/trang-chu-nhan-vien",
-    label: "Trang chủ",
-    icon: <HomeOutlined />,
-    roles: ["EMPLOYEE"],
-  },
-  {
-    key: "employeeLichLamViec",
-    path: "/nhan-vien-lich-lam-viec",
-    label: "Lịch làm việc",
+    path: "/phan-lich-bac-si",
+    label: "Phân lịch cho bác sĩ",
     icon: <ScheduleOutlined />,
     roles: ["EMPLOYEE"],
   },
-  {
-    key: "employeeQuanLiDatLich",
-    path: "/nhan-vien-quan-li-dat-lich",
-    label: "Quản lí đặt lịch",
-    icon: <CalendarOutlined />,
-    roles: ["EMPLOYEE"],
-  },
-  {
-    key: "employeeHoSo",
-    path: "/nhan-vien-ho-so",
-    label: "Hồ sơ cá nhân",
-    icon: <SolutionOutlined />,
-    roles: ["EMPLOYEE"],
-  },
-  {
-    key: "employeeThuNhap",
-    path: "/nhan-vien-thu-nhap",
-    label: "Thu nhập",
-    icon: <DollarOutlined />,
-    roles: ["EMPLOYEE"],
-  },
 
-  // ─── CUSTOMER ────────────────────────────────────────────
+  // ─── CUSTOMER
   {
     key: "customerTrangChu",
     path: "/trang-chu-khach-hang",
@@ -181,7 +149,7 @@ const ALL_ROUTES: RouteConfig[] = [
     roles: ["CUSTOMER"],
   },
 
-  // ─── DOCTOR ──────────────────────────────────────────────
+  // ─── DOCTOR 
   {
     key: "doctorHome",
     path: "/bac-si-quan-li-lich",
@@ -189,37 +157,9 @@ const ALL_ROUTES: RouteConfig[] = [
     icon: <ScheduleOutlined />,
     roles: ["DOCTOR"],
   },
-  {
-    key: "doctorBenhNhan",
-    path: "/bac-si-benh-nhan",
-    label: "Bệnh nhân",
-    icon: <TeamOutlined />,
-    roles: ["DOCTOR"],
-  },
-  {
-    key: "doctorHoSoBenhAn",
-    path: "/bac-si-ho-so-benh-an",
-    label: "Hồ sơ bệnh án",
-    icon: <FileTextOutlined />,
-    roles: ["DOCTOR"],
-  },
-  {
-    key: "doctorDonThuoc",
-    path: "/bac-si-don-thuoc",
-    label: "Đơn thuốc",
-    icon: <MedicineBoxOutlined />,
-    roles: ["DOCTOR"],
-  },
-  {
-    key: "doctorThongKe",
-    path: "/bac-si-thong-ke",
-    label: "Thống kê năng suất",
-    icon: <LineChartOutlined />,
-    roles: ["DOCTOR"],
-  },
 ];
 
-// ─── helpers ─────────────────────────────────────────────────────────────────
+// ─── helpers 
 
 const getMenuItemsByRole = (role: Role) =>
   ALL_ROUTES.filter((r) => r.roles.includes(role)).map((r) => ({
@@ -353,8 +293,7 @@ const AdminLayout = ({
   };
 
   const userDropdownItems: MenuProps["items"] = [
-    { key: "profile", icon: <UserOutlined />, label: "Hồ sơ cá nhân" },
-    { key: "settings", icon: <SettingOutlined />, label: "Cài đặt" },
+    { key: "profile", icon: <UserOutlined />, label: "Hồ sơ cá nhân", onClick: () => navigate("/profile") },
     { type: "divider" },
     {
       key: "logout",
@@ -430,22 +369,6 @@ const AdminLayout = ({
           </div>
 
           <div className="header-right">
-            <Tooltip title="Thông báo">
-              <Badge count={3} size="small">
-                <button className="header-icon-btn">
-                  <BellOutlined />
-                </button>
-              </Badge>
-            </Tooltip>
-
-            <Tooltip title="Cài đặt">
-              <button className="header-icon-btn">
-                <SettingOutlined />
-              </button>
-            </Tooltip>
-
-            <div className="header-divider" />
-
             <Dropdown
               menu={{ items: userDropdownItems, onClick: handleMenuClick }}
               trigger={["click"]}

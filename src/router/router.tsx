@@ -24,6 +24,8 @@ const LichDat = lazy(() => import("../admin/page/components/lichDat"));
 
 const BacSiLich = lazy(() => import("../admin/page/ManBacSi/quanLiLich"));
 const BacSiThongKe = lazy(() => import("../admin/page/ManBacSi/thongKe"));
+
+const NVPLBS = lazy(() => import("../admin/page/ManNV/qlBacSi"));
 export interface AppRoute {
   name: string;
   path: string;
@@ -79,7 +81,7 @@ const routes = [
   {
     path: BaseUrl.Profile,
     component: Profile,
-    layout: MainLayout,
+    layout: null,
     showInMenu: true,
     private: false,
   },
@@ -110,6 +112,12 @@ const routes = [
     private: false,
     icon: null,
   },
+
+
+
+
+
+
 
   // admin
   {
@@ -181,9 +189,6 @@ const routes = [
 
 
 
-
-
-
   {
     name: null,
     path: BaseUrl.BacSiLich,
@@ -197,6 +202,19 @@ const routes = [
     name: null,
     path: BaseUrl.BacSiThongKe,
     component: BacSiThongKe,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: false,
+    icon: null,
+  },
+
+
+
+
+   {
+    name: null,
+    path: BaseUrl.NVPLBS,
+    component: NVPLBS,
     layout: MainLayoutAdmin,
     showInMenu: false,
     private: false,

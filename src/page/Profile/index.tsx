@@ -1,35 +1,79 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { message, Modal } from "antd";
+import { suaEmployess, suaCustomers, suaDoctor } from "../../api/api";
+
+type UserRole = "EMPLOYEE" | "CUSTOMER" | "DOCTOR" | null;
 
 interface Profile {
-  name: string;
-  email: string;
+  fullName: string;
   phone: string;
-  avatar: string;
+  avatar?: string;
+  // Customer & Employee & Doctor fields
+  address?: string;
+  date?: string;
+  // Employee fields
+  gender?: string;
+  cccd?: string;
+  // Doctor fields
+  specialized?: string;
+  information?: string;
+  lever?: string;
 }
 
-const initialProfile: Profile = {
-  name: "Nguyễn Thị Lan",
-  email: "lan.nguyen@gmail.com",
-  phone: "0912 345 678",
-  avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-};
-
 const UserProfile: React.FC = () => {
-  const [profile, setProfile] = useState<Profile>(initialProfile);
-  const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState<Pick<Profile, "name" | "phone" | "avatar">>({
-    name: profile.name,
-    phone: profile.phone,
-    avatar: profile.avatar,
-  });
-  const [errors, setErrors] = useState<Partial<typeof form>>({});
-  const [previewUrl, setPreviewUrl] = useState<string>(profile.avatar);
-  const [saved, setSaved] = useState(false);
+  const navigate = useNavigate();
   const fileRef = useRef<HTMLInputElement>(null);
 
+  const [role, setRole] = useState<UserRole>(null);
+  const [profile, setProfile] = useState<Profile>({
+    fullName: "",
+    phone: "",
+    avatar: "",
+  });
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState<Profile>(profile);
+  const [errors, setErrors] = useState<Partial<Profile>>({});
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+  const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [file, setFile] = useState<File | null>(null);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordLoading, setPasswordLoading] = useState(false);
+
+  // Check role and fetch profile data
+  useEffect(() => {
+    const userProfileRaw = localStorage.getItem("user_profile");
+    const userProfile = userProfileRaw ? JSON.parse(userProfileRaw) : {};
+    const userRole = userProfile.role as UserRole;
+    setRole(userRole);
+
+    // Map userProfile data to Profile interface
+    const profileData: Profile = {
+      fullName: userProfile.name || "",
+      phone: userProfile.gmail || "",
+      avatar: userProfile.img || "",
+      gender: userProfile.gender || "",
+      date: userProfile.date || "",
+      address: userProfile.address || "",
+      cccd: userProfile.cccd || "",
+      specialized: userProfile.specialized || "",
+      information: userProfile.information || "",
+      lever: userProfile.lever || "",
+    };
+    setProfile(profileData);
+    setPreviewUrl(profileData.avatar || "");
+    setForm(profileData);
+    
+    setLoading(false);
+  }, []);
+
   const startEdit = () => {
-    setForm({ name: profile.name, phone: profile.phone, avatar: profile.avatar });
-    setPreviewUrl(profile.avatar);
+    setForm(profile);
+    setPreviewUrl(profile.avatar || "");
     setErrors({});
     setEditing(true);
     setSaved(false);
@@ -38,42 +82,145 @@ const UserProfile: React.FC = () => {
   const cancelEdit = () => {
     setEditing(false);
     setErrors({});
+    setFile(null);
   };
 
   const validate = () => {
-    const e: Partial<typeof form> = {};
-    if (!form.name.trim()) e.name = "Vui lòng nhập họ và tên";
-    if (!form.phone.trim()) e.phone = "Vui lòng nhập số điện thoại";
+    const e: Partial<Profile> = {};
+    if (!form.fullName?.trim()) e.fullName = "Vui lòng nhập họ và tên";
+    if (!form.phone?.trim()) e.phone = "Vui lòng nhập số điện thoại";
     else if (!/^[0-9\s+\-().]{9,15}$/.test(form.phone.trim())) e.phone = "Số điện thoại không hợp lệ";
+
+    if (role === "EMPLOYEE") {
+      if (!form.cccd?.trim()) e.cccd = "Vui lòng nhập CCCD";
+      if (!form.address?.trim()) e.address = "Vui lòng nhập địa chỉ";
+    } else if (role === "CUSTOMER") {
+      if (!form.address?.trim()) e.address = "Vui lòng nhập địa chỉ";
+    } else if (role === "DOCTOR") {
+      if (!form.specialized?.trim()) e.specialized = "Vui lòng nhập chuyên khoa";
+      if (!form.address?.trim()) e.address = "Vui lòng nhập địa chỉ";
+    }
+
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!validate()) return;
-    setProfile({ ...profile, name: form.name, phone: form.phone, avatar: previewUrl });
-    setEditing(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+
+    try {
+      setLoading(true);
+      const hasFile = !!file;
+
+      if (role === "EMPLOYEE") {
+        await suaEmployess(null, {
+          fullName: form.fullName || "",
+          phone: form.phone || "",
+          gender: form.gender || "",
+          date: form.date || "",
+          address: form.address || "",
+          cccd: form.cccd || "",
+          pass: "",
+          file: hasFile ? file! : undefined,
+        });
+      } else if (role === "CUSTOMER") {
+        await suaCustomers({
+          fullName: form.fullName || "",
+          phone: form.phone || "",
+          date: form.date || "",
+          address: form.address || "",
+          pass: "",
+          file: hasFile ? file! : undefined,
+        });
+      } else if (role === "DOCTOR") {
+        await suaDoctor({
+          fullName: form.fullName || "",
+          phone: form.phone || "",
+          specialized: form.specialized || "",
+          information: form.information || "",
+          address: form.address || "",
+          lever: form.lever || "",
+          pass: "",
+          file: hasFile ? file! : undefined,
+        });
+      }
+
+      message.success("Cập nhật thông tin thành công");
+      setProfile(form);
+      setEditing(false);
+      setSaved(true);
+      setFile(null);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (error) {
+      console.error("Error saving profile:", error);
+      message.error("Không thể cập nhật thông tin");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
-    if (errors[name as keyof typeof errors]) {
+    if (errors[name as keyof Profile]) {
       setErrors(prev => ({ ...prev, [name]: undefined }));
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const url = URL.createObjectURL(file);
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+    setFile(selectedFile);
+    const url = URL.createObjectURL(selectedFile);
     setPreviewUrl(url);
-    setForm(prev => ({ ...prev, avatar: url }));
   };
 
-  const initials = profile.name
+  const handleOpenPasswordModal = () => {
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setIsPasswordModalOpen(true);
+  };
+
+  const handleChangePassword = async () => {
+    if (!currentPassword.trim()) {
+      message.warning("Vui lòng nhập mật khẩu hiện tại");
+      return;
+    }
+    if (!newPassword.trim()) {
+      message.warning("Vui lòng nhập mật khẩu mới");
+      return;
+    }
+    if (newPassword.length < 6) {
+      message.warning("Mật khẩu mới phải có ít nhất 6 ký tự");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      message.warning("Xác nhận mật khẩu không khớp");
+      return;
+    }
+
+    try {
+      setPasswordLoading(true);
+      // TODO: Call API to change password
+      // await changePassword(currentPassword, newPassword);
+      message.success("Đổi mật khẩu thành công");
+      setIsPasswordModalOpen(false);
+    } catch (error) {
+      message.error(error instanceof Error ? error.message : "Không thể đổi mật khẩu");
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
+  const handleCancelPasswordModal = () => {
+    setIsPasswordModalOpen(false);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+  };
+
+  const initials = (profile.fullName || "")
     .split(" ")
     .slice(-2)
     .map(w => w[0])
@@ -82,20 +229,35 @@ const UserProfile: React.FC = () => {
 
   return (
     <div className="upr">
-      <div className="upr-card">
 
+      {/* ── Nút quay lại ── */}
+      <button
+        className="upr-back-btn"
+        onClick={() => navigate(-1)}
+      >
+        <svg viewBox="0 0 16 16" fill="none" width="16" height="16">
+          <path d="M10 4l-4 4 4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        Quay lại
+      </button>
+
+      <div className="upr-card">
         <div className="upr-banner" />
 
         <div className="upr-avatar-wrap">
           <div className="upr-avatar">
             {editing ? (
-              <img
-                src={previewUrl}
-                alt="avatar"
-                onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
-              />
+              previewUrl ? (
+                <img
+                  src={previewUrl}
+                  alt="avatar"
+                  onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
+                />
+              ) : (
+                <span className="upr-avatar__initials">{initials}</span>
+              )
             ) : profile.avatar ? (
-              <img src={profile.avatar} alt={profile.name} />
+              <img src={profile.avatar} alt={profile.fullName} />
             ) : (
               <span className="upr-avatar__initials">{initials}</span>
             )}
@@ -107,7 +269,7 @@ const UserProfile: React.FC = () => {
                 title="Đổi ảnh"
               >
                 <svg viewBox="0 0 14 14" fill="none">
-                  <path d="M9 2l3 3-7 7H2v-3L9 2z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+                  <path d="M9 2l3 3-7 7H2v-3L9 2z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
                 </svg>
               </button>
             )}
@@ -124,7 +286,7 @@ const UserProfile: React.FC = () => {
         {saved && (
           <div className="upr-toast">
             <svg viewBox="0 0 14 14" fill="none">
-              <path d="M2 7l3.5 3.5 6.5-7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 7l3.5 3.5 6.5-7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             Lưu thay đổi thành công
           </div>
@@ -132,97 +294,269 @@ const UserProfile: React.FC = () => {
 
         <div className="upr-info">
           {!editing ? (
-
             <>
-              <h2 className="upr-info__name">{profile.name}</h2>
-              <p className="upr-info__email">{profile.email}</p>
+              <h2 className="upr-info__name">{profile.fullName}</h2>
+              <p className="upr-info__email">{role?.toUpperCase()}</p>
 
               <div className="upr-fields">
                 <div className="upr-field-row">
                   <span className="upr-field-row__label">
-                    <svg viewBox="0 0 14 14" fill="none"><path d="M7 7a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM2 13a5 5 0 0110 0" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                    <svg viewBox="0 0 14 14" fill="none"><path d="M7 7a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM2 13a5 5 0 0110 0" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" /></svg>
                     Họ và tên
                   </span>
-                  <span className="upr-field-row__value">{profile.name}</span>
+                  <span className="upr-field-row__value">{profile.fullName}</span>
                 </div>
 
                 <div className="upr-field-row">
                   <span className="upr-field-row__label">
-                    <svg viewBox="0 0 14 14" fill="none"><rect x="1" y="2.5" width="12" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.2"/><path d="M1 5l6 4 6-4" stroke="currentColor" strokeWidth="1.2"/></svg>
-                    Email
-                  </span>
-                  <span className="upr-field-row__value upr-field-row__value--muted">{profile.email}</span>
-                </div>
-
-                <div className="upr-field-row">
-                  <span className="upr-field-row__label">
-                    <svg viewBox="0 0 14 14" fill="none"><path d="M10.5 9.5l-1.5 1.5C7 11 3 7 3 5l1.5-1.5 1.5 2-1 1c.5 1.5 2.5 3.5 4 4l1-1 1.5 1.5z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/></svg>
+                    <svg viewBox="0 0 14 14" fill="none"><path d="M10.5 9.5l-1.5 1.5C7 11 3 7 3 5l1.5-1.5 1.5 2-1 1c.5 1.5 2.5 3.5 4 4l1-1 1.5 1.5z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" /></svg>
                     Số điện thoại
                   </span>
                   <span className="upr-field-row__value">{profile.phone}</span>
                 </div>
+
+                {role === "EMPLOYEE" && (
+                  <>
+                    <div className="upr-field-row">
+                      <span className="upr-field-row__label">Giới tính</span>
+                      <span className="upr-field-row__value">{profile.gender || "—"}</span>
+                    </div>
+                    <div className="upr-field-row">
+                      <span className="upr-field-row__label">Ngày sinh</span>
+                      <span className="upr-field-row__value">{profile.date || "—"}</span>
+                    </div>
+                    <div className="upr-field-row">
+                      <span className="upr-field-row__label">Địa chỉ</span>
+                      <span className="upr-field-row__value">{profile.address || "—"}</span>
+                    </div>
+                    <div className="upr-field-row">
+                      <span className="upr-field-row__label">CCCD</span>
+                      <span className="upr-field-row__value">{profile.cccd || "—"}</span>
+                    </div>
+                  </>
+                )}
+
+                {role === "CUSTOMER" && (
+                  <>
+                    <div className="upr-field-row">
+                      <span className="upr-field-row__label">Ngày sinh</span>
+                      <span className="upr-field-row__value">{profile.date || "—"}</span>
+                    </div>
+                    <div className="upr-field-row">
+                      <span className="upr-field-row__label">Địa chỉ</span>
+                      <span className="upr-field-row__value">{profile.address || "—"}</span>
+                    </div>
+                  </>
+                )}
+
+                {role === "DOCTOR" && (
+                  <>
+                    <div className="upr-field-row">
+                      <span className="upr-field-row__label">Chuyên khoa</span>
+                      <span className="upr-field-row__value">{profile.specialized || "—"}</span>
+                    </div>
+                    <div className="upr-field-row">
+                      <span className="upr-field-row__label">Trình độ</span>
+                      <span className="upr-field-row__value">{profile.lever || "—"}</span>
+                    </div>
+                    <div className="upr-field-row">
+                      <span className="upr-field-row__label">Địa chỉ</span>
+                      <span className="upr-field-row__value">{profile.address || "—"}</span>
+                    </div>
+                    <div className="upr-field-row">
+                      <span className="upr-field-row__label">Thông tin</span>
+                      <span className="upr-field-row__value">{profile.information || "—"}</span>
+                    </div>
+                  </>
+                )}
               </div>
 
-              <button className="upr-btn upr-btn--primary" onClick={startEdit}>
-                <svg viewBox="0 0 14 14" fill="none"><path d="M9 2l3 3-7 7H2v-3L9 2z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/></svg>
+              <button className="upr-btn upr-btn--primary" onClick={startEdit} disabled={loading}>
+                <svg viewBox="0 0 14 14" fill="none"><path d="M9 2l3 3-7 7H2v-3L9 2z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" /></svg>
                 Chỉnh sửa thông tin
               </button>
             </>
-
           ) : (
-
             <>
-              <h2 className="upr-info__name">{form.name || "—"}</h2>
+              <h2 className="upr-info__name">{form.fullName || "—"}</h2>
               <p className="upr-info__email upr-info__email--lock">
-                <svg viewBox="0 0 12 12" fill="none"><rect x="2" y="5" width="8" height="6" rx="1" stroke="currentColor" strokeWidth="1.1"/><path d="M4 5V3.5a2 2 0 014 0V5" stroke="currentColor" strokeWidth="1.1"/></svg>
-                {profile.email}
+                <svg viewBox="0 0 12 12" fill="none"><rect x="2" y="5" width="8" height="6" rx="1" stroke="currentColor" strokeWidth="1.1" /><path d="M4 5V3.5a2 2 0 014 0V5" stroke="currentColor" strokeWidth="1.1" /></svg>
+                {role?.toUpperCase()}
               </p>
 
               <div className="upr-edit-fields">
-                <div className={`upr-efield ${errors.name ? "upr-efield--error" : ""}`}>
+                <div className={`upr-efield ${errors.fullName ? "upr-efield--error" : ""}`}>
                   <label>Họ và tên <span>*</span></label>
                   <input
-                    name="name"
-                    value={form.name}
+                    name="fullName"
+                    value={form.fullName || ""}
                     onChange={handleChange}
                     placeholder="Nhập họ và tên..."
                   />
-                  {errors.name && <p className="upr-efield__error">{errors.name}</p>}
-                </div>
-
-                <div className="upr-efield upr-efield--disabled">
-                  <label>
-                    Email
-                    <span className="upr-efield__lock">
-                      <svg viewBox="0 0 10 10" fill="none"><rect x="2" y="4.5" width="6" height="5" rx="1" stroke="currentColor" strokeWidth="1"/><path d="M3.5 4.5V3a1.5 1.5 0 013 0v1.5" stroke="currentColor" strokeWidth="1"/></svg>
-                      Không thể sửa
-                    </span>
-                  </label>
-                  <input value={profile.email} disabled />
+                  {errors.fullName && <p className="upr-efield__error">{errors.fullName}</p>}
                 </div>
 
                 <div className={`upr-efield ${errors.phone ? "upr-efield--error" : ""}`}>
                   <label>Số điện thoại <span>*</span></label>
                   <input
                     name="phone"
-                    value={form.phone}
+                    value={form.phone || ""}
                     onChange={handleChange}
                     placeholder="Nhập số điện thoại..."
                   />
                   {errors.phone && <p className="upr-efield__error">{errors.phone}</p>}
                 </div>
 
+                {role === "EMPLOYEE" && (
+                  <>
+                    <div className={`upr-efield ${errors.gender ? "upr-efield--error" : ""}`}>
+                      <label>Giới tính</label>
+                      <select
+                        name="gender"
+                        value={form.gender || ""}
+                        onChange={(e) => {
+                          setForm(prev => ({ ...prev, gender: e.target.value }));
+                          if (errors.gender) setErrors(prev => ({ ...prev, gender: undefined }));
+                        }}
+                      >
+                        <option value="">Chọn giới tính</option>
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                        <option value="Khác">Khác</option>
+                      </select>
+                      {errors.gender && <p className="upr-efield__error">{errors.gender}</p>}
+                    </div>
+
+                    <div className={`upr-efield ${errors.date ? "upr-efield--error" : ""}`}>
+                      <label>Ngày sinh</label>
+                      <input
+                        type="date"
+                        name="date"
+                        value={form.date || ""}
+                        onChange={handleChange}
+                      />
+                      {errors.date && <p className="upr-efield__error">{errors.date}</p>}
+                    </div>
+
+                    <div className={`upr-efield ${errors.cccd ? "upr-efield--error" : ""}`}>
+                      <label>CCCD <span>*</span></label>
+                      <input
+                        name="cccd"
+                        value={form.cccd || ""}
+                        onChange={handleChange}
+                        placeholder="Nhập CCCD..."
+                      />
+                      {errors.cccd && <p className="upr-efield__error">{errors.cccd}</p>}
+                    </div>
+
+                    <div className={`upr-efield ${errors.address ? "upr-efield--error" : ""}`}>
+                      <label>Địa chỉ <span>*</span></label>
+                      <input
+                        name="address"
+                        value={form.address || ""}
+                        onChange={handleChange}
+                        placeholder="Nhập địa chỉ..."
+                      />
+                      {errors.address && <p className="upr-efield__error">{errors.address}</p>}
+                    </div>
+                  </>
+                )}
+
+                {role === "CUSTOMER" && (
+                  <>
+                    <div className={`upr-efield ${errors.date ? "upr-efield--error" : ""}`}>
+                      <label>Ngày sinh</label>
+                      <input
+                        type="date"
+                        name="date"
+                        value={form.date || ""}
+                        onChange={handleChange}
+                      />
+                      {errors.date && <p className="upr-efield__error">{errors.date}</p>}
+                    </div>
+
+                    <div className={`upr-efield ${errors.address ? "upr-efield--error" : ""}`}>
+                      <label>Địa chỉ <span>*</span></label>
+                      <input
+                        name="address"
+                        value={form.address || ""}
+                        onChange={handleChange}
+                        placeholder="Nhập địa chỉ..."
+                      />
+                      {errors.address && <p className="upr-efield__error">{errors.address}</p>}
+                    </div>
+                  </>
+                )}
+
+                {role === "DOCTOR" && (
+                  <>
+                    <div className={`upr-efield ${errors.specialized ? "upr-efield--error" : ""}`}>
+                      <label>Chuyên khoa <span>*</span></label>
+                      <input
+                        name="specialized"
+                        value={form.specialized || ""}
+                        onChange={handleChange}
+                        placeholder="Nhập chuyên khoa..."
+                      />
+                      {errors.specialized && <p className="upr-efield__error">{errors.specialized}</p>}
+                    </div>
+
+                    <div className={`upr-efield ${errors.lever ? "upr-efield--error" : ""}`}>
+                      <label>Trình độ</label>
+                      <input
+                        name="lever"
+                        value={form.lever || ""}
+                        onChange={handleChange}
+                        placeholder="Nhập trình độ..."
+                      />
+                      {errors.lever && <p className="upr-efield__error">{errors.lever}</p>}
+                    </div>
+
+                    <div className={`upr-efield ${errors.information ? "upr-efield--error" : ""}`}>
+                      <label>Thông tin</label>
+                      <textarea
+                        name="information"
+                        value={form.information || ""}
+                        onChange={handleChange}
+                        placeholder="Nhập thông tin..."
+                        rows={4}
+                      />
+                      {errors.information && <p className="upr-efield__error">{errors.information}</p>}
+                    </div>
+
+                    <div className={`upr-efield ${errors.address ? "upr-efield--error" : ""}`}>
+                      <label>Địa chỉ <span>*</span></label>
+                      <input
+                        name="address"
+                        value={form.address || ""}
+                        onChange={handleChange}
+                        placeholder="Nhập địa chỉ..."
+                      />
+                      {errors.address && <p className="upr-efield__error">{errors.address}</p>}
+                    </div>
+                  </>
+                )}
+
+                <div className="upr-efield">
+                  <button
+                    type="button"
+                    className="upr-btn upr-btn--ghost"
+                    onClick={handleOpenPasswordModal}
+                    style={{ width: "100%", marginTop: "10px" }}
+                  >
+                    Đổi mật khẩu
+                  </button>
+                </div>
+
                 <div className="upr-efield">
                   <label>Ảnh đại diện</label>
                   <div className="upr-avatar-input">
                     <input
-                      name="avatarUrl"
-                      value={previewUrl.startsWith("blob:") ? "" : previewUrl}
-                      onChange={e => {
-                        setPreviewUrl(e.target.value);
-                        setForm(prev => ({ ...prev, avatar: e.target.value }));
-                      }}
-                      placeholder="Dán link ảnh hoặc tải lên bên trên..."
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      placeholder="Chọn ảnh..."
+                      style={{display:'none'}}
                     />
                     <button
                       type="button"
@@ -236,15 +570,77 @@ const UserProfile: React.FC = () => {
               </div>
 
               <div className="upr-edit-actions">
-                <button className="upr-btn upr-btn--ghost" onClick={cancelEdit}>Hủy</button>
-                <button className="upr-btn upr-btn--primary" onClick={handleSave}>Lưu thay đổi</button>
+                <button className="upr-btn upr-btn--ghost" onClick={cancelEdit} disabled={loading}>Hủy</button>
+                <button className="upr-btn upr-btn--primary" onClick={handleSave} disabled={loading}>
+                  {loading ? "Đang lưu..." : "Lưu thay đổi"}
+                </button>
               </div>
             </>
-
           )}
         </div>
-
       </div>
+
+      {/* Password Change Modal */}
+      <Modal
+        title="Đổi mật khẩu"
+        open={isPasswordModalOpen}
+        onOk={handleChangePassword}
+        onCancel={handleCancelPasswordModal}
+        okText="Đổi mật khẩu"
+        cancelText="Hủy"
+        confirmLoading={passwordLoading}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          <div>
+            <label style={{ display: "block", marginBottom: "8px", fontWeight: 500 }}>Mật khẩu hiện tại</label>
+            <input
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              placeholder="Nhập mật khẩu hiện tại"
+              style={{
+                width: "100%",
+                padding: "8px 12px",
+                border: "1px solid #dde5ec",
+                borderRadius: "8px",
+                fontSize: "14px",
+              }}
+            />
+          </div>
+          <div>
+            <label style={{ display: "block", marginBottom: "8px", fontWeight: 500 }}>Mật khẩu mới</label>
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="Nhập mật khẩu mới"
+              style={{
+                width: "100%",
+                padding: "8px 12px",
+                border: "1px solid #dde5ec",
+                borderRadius: "8px",
+                fontSize: "14px",
+              }}
+            />
+          </div>
+          <div>
+            <label style={{ display: "block", marginBottom: "8px", fontWeight: 500 }}>Xác nhận mật khẩu</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Xác nhận mật khẩu mới"
+              style={{
+                width: "100%",
+                padding: "8px 12px",
+                border: "1px solid #dde5ec",
+                borderRadius: "8px",
+                fontSize: "14px",
+              }}
+            />
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

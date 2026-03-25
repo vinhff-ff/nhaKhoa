@@ -270,9 +270,76 @@ $shadow-md:   0 8px 32px rgba(26,58,92,0.13);
     }
   }
 
+  select {
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid $border;
+    border-radius: $radius-md;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 14px;
+    color: $text-main;
+    background: #f8fafc;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    width: 100%;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%235a6e7f' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+
+    &:focus {
+      border-color: $accent;
+      box-shadow: 0 0 0 3px rgba($accent, 0.11);
+      background-color: $bg-white;
+    }
+
+    &:disabled {
+      background-color: $bg-page;
+      color: $text-light;
+      cursor: not-allowed;
+    }
+
+    option {
+      color: $text-main;
+      background: $bg-white;
+    }
+  }
+
+  textarea {
+    padding: 10px 12px;
+    border: 1px solid $border;
+    border-radius: $radius-md;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 14px;
+    color: $text-main;
+    background: #f8fafc;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    width: 100%;
+    resize: vertical;
+    min-height: 100px;
+
+    &::placeholder { color: $text-light; }
+
+    &:focus {
+      border-color: $accent;
+      box-shadow: 0 0 0 3px rgba($accent, 0.11);
+      background: $bg-white;
+    }
+
+    &:disabled {
+      background: $bg-page;
+      color: $text-light;
+      cursor: not-allowed;
+    }
+  }
+
   &--disabled label { color: $text-light; }
 
-  &--error input { border-color: $danger; }
+  &--error input,
+  &--error select { border-color: $danger; }
 
   &__error {
     font-size: 11.5px;
@@ -359,4 +426,28 @@ $shadow-md:   0 8px 32px rgba(26,58,92,0.13);
 @media (max-width: 520px) {
   .upr { padding: 2rem 1rem 4rem; }
   .upr-info { padding: 1rem 1.25rem 1.5rem; }
+}
+
+.upr-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 7px 14px;
+  border: 1px solid #e2e6ee;
+  border-radius: 8px;
+  background: #fff;
+  color: #5a6a7a;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: absolute;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+}
+.upr-back-btn:hover {
+  background: #f4f6fb;
+  color: #1a2332;
 }
