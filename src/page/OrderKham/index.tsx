@@ -7,6 +7,7 @@ import bgBooking from "../../assets/bgUser.png";
 import BgWhiteBorder from "../../components/custom/bgWhiteBoder";
 import { seeEmptySchedule, seeSchedule } from "../../api/employees";
 import { datLichHen } from "../../api/api";
+
 // Helper: Get today's date in YYYY-MM-DD format
 const getTodayDate = () => {
   const today = new Date();
@@ -66,11 +67,11 @@ const OrderLichKham = () => {
   // Form fields
   const [formData, setFormData] = useState({
     name: "",
-    dob: "",
+    dateOfBirth: "",   // → date (ngày sinh, LocalDate)
     phone: "",
-    email: "",
+    gmail: "",
     address: "",
-    selectedTime: "",
+    appointmentTime: "", // → timeOpen (giờ khám, LocalTime)
     note: "",
   });
   const [submitting, setSubmitting] = useState(false);
@@ -80,15 +81,12 @@ const OrderLichKham = () => {
     const fetchDoctors = async () => {
       try {
         setLoadingDoctors(true);
-        
-        // Get all schedules
+
         const res = await seeSchedule();
         const schedules: Schedule[] = Array.isArray(res) ? res : res?.data ?? [];
-        
-        // Filter schedules for selected date
+
         const filteredSchedules = schedules.filter(s => s.workDate === examDate);
-        
-        // Extract unique doctors from filtered schedules
+
         const doctorMap = new Map<number, { id: number; name: string }>();
         filteredSchedules.forEach(schedule => {
           if (!doctorMap.has(schedule.doctorId)) {
@@ -98,19 +96,16 @@ const OrderLichKham = () => {
             });
           }
         });
-        
-        // Convert map to array
+
         const docList = Array.from(doctorMap.values());
         setDoctors(docList);
-        
-        // Map to SelectCustom format
+
         const options = docList.map(doc => ({
           label: `BS. ${doc.name}`,
           value: String(doc.id),
         }));
         setDoctorOptions(options);
-        
-        // Reset selected doctor when date changes
+
         setSelectedDoctor("");
       } catch (err) {
         console.error("Lỗi tải danh sách bác sĩ:", err);
@@ -126,30 +121,26 @@ const OrderLichKham = () => {
   useEffect(() => {
     const fetchSlots = async () => {
       if (!selectedDoctor || !examDate) return;
-      
+
       try {
         setLoadingSlots(true);
         const res = await seeEmptySchedule({
           doctorId: Number(selectedDoctor),
           workDate: examDate,
         });
-        
+
         const slotList: TimeSlot[] = Array.isArray(res) ? res : res?.data ?? [];
         setSlots(slotList);
-        
-        // Map to SelectCustom format and filter out lunch break (11:00-13:00)
+
         const options = slotList
           .map(slot => ({
             time: formatTime(slot.timeSlot),
             label: formatTime(slot.timeSlot),
             value: formatTime(slot.timeSlot),
           }))
-          .filter(item => {
-            // Hide times between 11:00 and 13:00 (lunch break)
-            return !(item.time >= "11:00" && item.time < "13:00");
-          })
+          .filter(item => !(item.time >= "11:00" && item.time < "13:00"))
           .map(({ label, value }) => ({ label, value }));
-        
+
         setTimeOptions(options);
       } catch (err) {
         console.error("Lỗi tải giờ trống:", err);
@@ -164,15 +155,14 @@ const OrderLichKham = () => {
 
   // Handle form submission
   const handleSubmit = async () => {
-    // Validate fields (dob is optional)
     if (
       !formData.name.trim() ||
       !formData.phone.trim() ||
-      !formData.email.trim() ||
+      !formData.gmail.trim() ||
       !formData.address.trim() ||
       !selectedDoctor ||
       !examDate ||
-      !formData.selectedTime ||
+      !formData.appointmentTime ||
       !formData.note.trim()
     ) {
       message.error("Vui lòng điền đầy đủ tất cả các trường bắt buộc");
@@ -181,33 +171,30 @@ const OrderLichKham = () => {
 
     setSubmitting(true);
     try {
-      // Combine exam date and time into ISO datetime format for appointment
-      const dateTimeString = `${examDate}T${formData.selectedTime}:00`;
-
       const body = {
         doctorId: Number(selectedDoctor),
         name: formData.name,
-        date: formData.dob || null,  // date of birth (ngày sinh)
+        date: formData.dateOfBirth || null,         // ngày sinh (LocalDate: YYYY-MM-DD)
         phone: formData.phone,
-        gmail: formData.email,
+        gmail: formData.gmail,
         address: formData.address,
-        timeOpen: dateTimeString,    // appointment time (thời gian khám)
+        createdAt: examDate,                        // ngày khám bệnh (LocalDate: YYYY-MM-DD)
+        timeOpen: `${formData.appointmentTime}:00`, // giờ khám (LocalTime: HH:MM:SS)
         note: formData.note,
       };
 
       const result = await datLichHen(body);
       console.log("Đặt lịch thành công:", result);
       message.success("Đặt lịch khám thành công! Chúng tôi sẽ liên hệ bạn sớm.");
-      
-      // Reset form after 1.5 seconds
+
       setTimeout(() => {
         setFormData({
           name: "",
-          dob: "",
+          dateOfBirth: "",
           phone: "",
-          email: "",
+          gmail: "",
           address: "",
-          selectedTime: "",
+          appointmentTime: "",
           note: "",
         });
         setSelectedDoctor("");
@@ -255,9 +242,9 @@ const OrderLichKham = () => {
                   <label>Ngày tháng năm sinh</label>
                   <InputCustom
                     type="date"
-                    value={formData.dob}
+                    value={formData.dateOfBirth}
                     onChange={(e: any) =>
-                      setFormData({ ...formData, dob: e.target.value })
+                      setFormData({ ...formData, dateOfBirth: e.target.value })
                     }
                   />
                 </div>
@@ -274,12 +261,12 @@ const OrderLichKham = () => {
                 </div>
 
                 <div className="formRow">
-                  <label>Email</label>
+                  <label>Gmail</label>
                   <InputCustom
-                    placeholder="Email"
-                    value={formData.email}
+                    placeholder="Gmail"
+                    value={formData.gmail}
                     onChange={(e: any) =>
-                      setFormData({ ...formData, email: e.target.value })
+                      setFormData({ ...formData, gmail: e.target.value })
                     }
                   />
                 </div>
@@ -300,8 +287,8 @@ const OrderLichKham = () => {
               <div className="orderForm__col">
                 <div className="formRow">
                   <label>Ngày khám bệnh</label>
-                  <InputCustom 
-                    type="date" 
+                  <InputCustom
+                    type="date"
                     value={examDate}
                     onChange={(e: any) => setExamDate(e.target.value)}
                   />
@@ -309,8 +296,8 @@ const OrderLichKham = () => {
 
                 <div className="formRow">
                   <label>Chọn bác sĩ</label>
-                  <SelectCustom 
-                    options={doctorOptions} 
+                  <SelectCustom
+                    options={doctorOptions}
                     placeholder={loadingDoctors ? "Đang tải..." : "Chọn bác sĩ"}
                     value={selectedDoctor}
                     onChange={(value: string) => setSelectedDoctor(value)}
@@ -319,21 +306,21 @@ const OrderLichKham = () => {
 
                 <div className="formRow">
                   <label>Giờ khám</label>
-                  <SelectCustom 
-                    options={timeOptions} 
+                  <SelectCustom
+                    options={timeOptions}
                     placeholder={loadingSlots ? "Đang tải..." : "Chọn giờ khám"}
                     disabled={!selectedDoctor || loadingSlots}
-                    value={formData.selectedTime}
+                    value={formData.appointmentTime}
                     onChange={(value: string) =>
-                      setFormData({ ...formData, selectedTime: value })
+                      setFormData({ ...formData, appointmentTime: value })
                     }
                   />
                 </div>
 
                 <div className="formRow textareaRow">
-                  <label>Vấn đề mắt đang gặp phải</label>
+                  <label>Vấn đề đang gặp phải</label>
                   <textarea
-                    placeholder="Mô tả vấn đề mắt..."
+                    placeholder="Mô tả vấn đề..."
                     value={formData.note}
                     onChange={(e) =>
                       setFormData({ ...formData, note: e.target.value })

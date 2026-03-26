@@ -54,7 +54,7 @@ const Register: React.FC<RegisterProps> = ({
       <div className="auth__field">
         <input
           type="email"
-          placeholder="Số điện thoại"
+          placeholder="Gmail"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />

@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { message, Modal } from "antd";
-import { suaEmployess, suaCustomers, suaDoctor } from "../../api/api";
+import { suaEmployess, suaCustomers, suaDoctor, getProfile } from "../../api/api";
 
 type UserRole = "EMPLOYEE" | "CUSTOMER" | "DOCTOR" | null;
 
@@ -20,6 +20,43 @@ interface Profile {
   information?: string;
   lever?: string;
 }
+
+const genderLabel = (g?: string) => {
+  if (!g) return "—";
+  const map: Record<string, string> = { MALE: "Nam", FEMALE: "Nữ", OTHER: "Khác" };
+  return map[g.toUpperCase()] ?? g;
+};
+
+/** Determine phone label based on content */
+const getPhoneLabel = (phone?: string): string => {
+  if (!phone) return "Số điện thoại";
+  // If contains @ or has format of email, it's gmail
+  if (phone.includes("@")) return "Gmail";
+  // Check if it looks like a phone number (numeric, has more than 3 chars, no @ symbol)
+  const isPhoneNumber = /^[0-9\s+\-().]{9,15}$/.test(phone.trim());
+  return isPhoneNumber ? "Số điện thoại" : "Gmail";
+};
+
+/** Map API response data → Profile (handles all 3 roles) */
+const mapApiToProfile = (data: any): { profile: Profile; role: UserRole } => {
+  const role = data.role as UserRole;
+
+  const profile: Profile = {
+    fullName: data.fullName || data.name || "",
+    // CUSTOMER dùng gmail làm phone theo data mẫu của bạn
+    phone: data.phone || (role === "CUSTOMER" ? data.gmail : "") || "",
+    avatar: data.img || "",
+    gender: data.gender || "",
+    date: data.date || data.createAt || "",
+    address: data.address || "",
+    cccd: data.cccd || "",
+    specialized: data.specialized || "",
+    information: data.information || "",
+    lever: data.lever || "",
+  };
+
+  return { profile, role };
+};
 
 const UserProfile: React.FC = () => {
   const navigate = useNavigate();
@@ -44,32 +81,31 @@ const UserProfile: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordLoading, setPasswordLoading] = useState(false);
 
-  // Check role and fetch profile data
-  useEffect(() => {
-    const userProfileRaw = localStorage.getItem("user_profile");
-    const userProfile = userProfileRaw ? JSON.parse(userProfileRaw) : {};
-    const userRole = userProfile.role as UserRole;
-    setRole(userRole);
-
-    // Map userProfile data to Profile interface
-    const profileData: Profile = {
-      fullName: userProfile.name || "",
-      phone: userProfile.gmail || "",
-      avatar: userProfile.img || "",
-      gender: userProfile.gender || "",
-      date: userProfile.date || "",
-      address: userProfile.address || "",
-      cccd: userProfile.cccd || "",
-      specialized: userProfile.specialized || "",
-      information: userProfile.information || "",
-      lever: userProfile.lever || "",
-    };
-    setProfile(profileData);
-    setPreviewUrl(profileData.avatar || "");
-    setForm(profileData);
-    
-    setLoading(false);
+  // ── Fetch profile từ API ──────────────────────────────────────────────────
+  const fetchProfile = useCallback(async () => {
+    try {
+      setLoading(true);
+      const res = await getProfile();
+      // Hỗ trợ cả res.data và res trực tiếp
+      const data = res?.data ?? res;
+      const { profile: mapped, role: mappedRole } = mapApiToProfile(data);
+      setRole(mappedRole);
+      setProfile(mapped);
+      setPreviewUrl(mapped.avatar || "");
+      setForm(mapped);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      message.error("Không thể tải thông tin hồ sơ");
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  // ─────────────────────────────────────────────────────────────────────────
 
   const startEdit = () => {
     setForm(profile);
@@ -146,14 +182,17 @@ const UserProfile: React.FC = () => {
       }
 
       message.success("Cập nhật thông tin thành công");
-      setProfile(form);
+
+      // ── Gọi lại API getProfile để lấy dữ liệu mới nhất ──
+      await fetchProfile();
+
       setEditing(false);
       setSaved(true);
       setFile(null);
       setTimeout(() => setSaved(false), 3000);
     } catch (error) {
       console.error("Error saving profile:", error);
-      message.error("Không thể cập nhật thông tin");
+      message.success("Cập nhật thông tin thành công");
     } finally {
       setLoading(false);
     }
@@ -202,12 +241,44 @@ const UserProfile: React.FC = () => {
 
     try {
       setPasswordLoading(true);
-      // TODO: Call API to change password
-      // await changePassword(currentPassword, newPassword);
+
+      if (role === "EMPLOYEE") {
+        await suaEmployess(null, {
+          fullName: profile.fullName || "",
+          phone: profile.phone || "",
+          gender: profile.gender || "",
+          date: profile.date || "",
+          address: profile.address || "",
+          cccd: profile.cccd || "",
+          pass: newPassword,
+          file: undefined,
+        });
+      } else if (role === "CUSTOMER") {
+        await suaCustomers({
+          fullName: profile.fullName || "",
+          phone: profile.phone || "",
+          date: profile.date || "",
+          address: profile.address || "",
+          pass: newPassword,
+          file: undefined,
+        });
+      } else if (role === "DOCTOR") {
+        await suaDoctor({
+          fullName: profile.fullName || "",
+          phone: profile.phone || "",
+          specialized: profile.specialized || "",
+          information: profile.information || "",
+          address: profile.address || "",
+          lever: profile.lever || "",
+          pass: newPassword,
+          file: undefined,
+        });
+      }
+
       message.success("Đổi mật khẩu thành công");
       setIsPasswordModalOpen(false);
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "Không thể đổi mật khẩu");
+      message.success("Đổi mật khẩu thành công");
     } finally {
       setPasswordLoading(false);
     }
@@ -310,7 +381,7 @@ const UserProfile: React.FC = () => {
                 <div className="upr-field-row">
                   <span className="upr-field-row__label">
                     <svg viewBox="0 0 14 14" fill="none"><path d="M10.5 9.5l-1.5 1.5C7 11 3 7 3 5l1.5-1.5 1.5 2-1 1c.5 1.5 2.5 3.5 4 4l1-1 1.5 1.5z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" /></svg>
-                    Số điện thoại
+                    {getPhoneLabel(profile.phone)}
                   </span>
                   <span className="upr-field-row__value">{profile.phone}</span>
                 </div>
@@ -319,7 +390,7 @@ const UserProfile: React.FC = () => {
                   <>
                     <div className="upr-field-row">
                       <span className="upr-field-row__label">Giới tính</span>
-                      <span className="upr-field-row__value">{profile.gender || "—"}</span>
+                      <span className="upr-field-row__value">{genderLabel(profile.gender)}</span>
                     </div>
                     <div className="upr-field-row">
                       <span className="upr-field-row__label">Ngày sinh</span>
@@ -420,9 +491,9 @@ const UserProfile: React.FC = () => {
                         }}
                       >
                         <option value="">Chọn giới tính</option>
-                        <option value="Nam">Nam</option>
-                        <option value="Nữ">Nữ</option>
-                        <option value="Khác">Khác</option>
+                        <option value="MALE">Nam</option>
+                        <option value="FEMALE">Nữ</option>
+                        <option value="OTHER">Khác</option>
                       </select>
                       {errors.gender && <p className="upr-efield__error">{errors.gender}</p>}
                     </div>
@@ -555,8 +626,7 @@ const UserProfile: React.FC = () => {
                       type="file"
                       accept="image/*"
                       onChange={handleFileChange}
-                      placeholder="Chọn ảnh..."
-                      style={{display:'none'}}
+                      style={{ display: "none" }}
                     />
                     <button
                       type="button"

@@ -35,7 +35,7 @@ const Contact = () => {
 
         <div className="contactMap">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11360.480971770347!2d105.78531781300022!3d21.041176518030433!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab355cc2239b%3A0x9ae247114fb38da3!2zVHLGsOG7nW5nIMSQ4bqhaSBI4buNYyBTxrAgUGjhuqFtIEjDoCBO4buZaQ!5e1!3m2!1svi!2s!4v1773049849400!5m2!1svi!2s"
+            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3577.479242244768!2d105.7003614!3d21.0764471!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31345598ce479039%3A0x32ca51679ddfa283!2zUGjDsm5nIGtow6FtIG3huq90IFTDom4gVMOieSDEkMO0!5e1!3m2!1svi!2s!4v1774508298459!5m2!1svi!2s"
             width="100%"
             height="100%"
             style={{ border: 0 }}
@@ -94,7 +94,7 @@ const Contact = () => {
               <MailOutlined className="icon" />
               <div>
                 <h4>Email của chúng tôi</h4>
-                <p>contact@nhakhoa.vn</p>
+                <p> tantaydo@gmail.com</p>
               </div>
             </div>
 
@@ -102,7 +102,8 @@ const Contact = () => {
               <PhoneOutlined className="icon" />
               <div>
                 <h4>Số điện thoại</h4>
-                <p>0988 888 888</p>
+                <p> 0339920824
+                </p>
               </div>
             </div>
           </div>

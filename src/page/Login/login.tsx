@@ -77,7 +77,7 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
       <div className="auth__field">
         <input
           type="email"
-          placeholder="Số điện thoại"
+          placeholder="Gmail"
           value={gmail}
           onChange={(e) => setUsername(e.target.value)}
         />

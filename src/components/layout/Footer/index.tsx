@@ -3,6 +3,7 @@ import {
   MailOutlined,
   PhoneOutlined,
   EnvironmentOutlined,
+  FacebookFilled,
 } from "@ant-design/icons";
 
 import Logo from "../../../assets/logo.png";
@@ -18,25 +19,20 @@ const Footer = () => {
             <div className="footer-logo">
               <img src={Logo} alt="logo" />
               <div>
-                <h3>BỆNH VIỆN MẮT</h3>
-          
+                <h3>PHÒNG KHÁM MẮT TÂN TÂY ĐÔ
+                </h3>
+
               </div>
             </div>
 
             <p>
-              Công ty TNHH Tư vấn và Đầu tư Y tế Quốc tế
+              Chi nhánh thuộc Công ty Cổ phần Y – Dược Hưng Thành
+
             </p>
 
             <p>
-              Giấy chứng nhận đăng ký doanh nghiệp số: 0105008493 do Phòng
-              Đăng ký kinh doanh - Sở Kế hoạch và Đầu tư TP. Hà Nội cấp ngày
-              17/11/2010. Đăng ký thay đổi lần thứ: 14, ngày 16 tháng 12 năm
-              2022.
-            </p>
+              Mã số thuế: 0107008474-001
 
-            <p>
-              Giấy phép hoạt động khám bệnh, chữa bệnh số:
-              28/BYT - GPHĐ do Bộ Y tế cấp ngày 22/07/2020
             </p>
 
           </div>
@@ -47,25 +43,25 @@ const Footer = () => {
 
             <h3>Thông tin liên hệ</h3>
 
-            <div className="contact-item">
+            {/* <div className="contact-item">
               <MailOutlined />
               <span>vienmatquoctednd@gmail.com</span>
-            </div>
+            </div> */}
 
             <div className="contact-item">
               <PhoneOutlined />
-              <span>Hotline Tư vấn & Đặt lịch khám: 0968115588</span>
+              <span>Hotline:  0982 990 669</span>
             </div>
 
             <div className="contact-item">
-              <PhoneOutlined />
-              <span>Hotline CSKH & Khiếu nại: 0969.128.128</span>
+              <FacebookFilled />
+              <span>Phòng khám mắt Tân Tây Đô</span>
             </div>
-
+        
             <div className="contact-item">
               <EnvironmentOutlined />
               <span>
-                126-128 Bùi Thị Xuân, P. Hai Bà Trưng, Tp Hà Nội
+                Địa chỉ: BT4 Ô 8 KĐT Tân Tây Đô, Tân Lập, Đan Phượng, Hà Nội
               </span>
             </div>
 

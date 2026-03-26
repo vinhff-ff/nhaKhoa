@@ -12,6 +12,32 @@ export const getLich = async () => {
   return res.data;
 };
 
+export const getTopFeedbacks = async () => {
+  const res = await axiosInstance.get("/feedback/top5");
+  return res.data;
+};
+
+export const createFeedback = async (body: {
+  sick: string;
+  text: string;
+  evaluate: string | number;
+}) => {
+  const res = await axiosInstance.post("/feedback/create", body);
+  return res.data;
+};
+
+export const getUserAppointments = async () => {
+  const res = await axiosInstance.get("/appointments/my");
+  return res.data;
+};
+
+export const cancelAppointment = async (appointmentId: number) => {
+  const res = await axiosInstance.post(`/appointments/cancel/${appointmentId}`, {
+    AppointmentStatus: "CANCELLED",
+  });
+  return res.data;
+};
+
 // user
 
 export const taoTN = async (body: any) => {

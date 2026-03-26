@@ -12,6 +12,7 @@ const OrderKham = lazy(() => import("../page/OrderKham/index"));
 const Contact = lazy(() => import("../page/Contact/index"));
 const ThietBi = lazy(() => import("../page/ThietBiDetails/index"));
 const MySche = lazy(() => import("../page/QuanLiLichDat/index"));
+const Feedback = lazy(() => import("../page/Feedback/index"));
 
 const AdminChung = lazy(() => import("../admin/layout/admin"));
 
@@ -107,6 +108,15 @@ const routes = [
     name: null,
     path: BaseUrl.MySche,
     component: MySche,
+    layout: MainLayout,
+    showInMenu: false,
+    private: false,
+    icon: null,
+  },
+  {
+    name: null,
+    path: "/feedback",
+    component: Feedback,
     layout: MainLayout,
     showInMenu: false,
     private: false,

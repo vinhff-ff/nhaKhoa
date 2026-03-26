@@ -14,10 +14,10 @@ const AuthPage: React.FC = () => {
         <div className="auth-left">
           <div className="auth-logo">
             <img src={Logo} alt="logo" />
-            <span>MEDICARE</span>
+            <span>TÂN TÂY ĐÔ</span>
           </div>
 
-          <h1>Chào mừng đến với Medicare.</h1>
+          <h1>Chào mừng đến với TÂN TÂY ĐÔ</h1>
 
           <p>
             Chúng tôi rất vui được chăm sóc sức khỏe của quý vị. 

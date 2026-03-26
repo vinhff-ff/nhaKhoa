@@ -1,43 +1,51 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Rate } from "antd";
+import { useNavigate } from "react-router-dom";
+import { getTopFeedbacks } from "../../api/api";
+
+interface Feedback {
+    id: number;
+    fullName: string;
+    sick: string;
+    text: string;
+    evaluate: number;
+    gmail: string;
+    createdAt: string | null;
+    imageUrl?: string;
+}
 
 const Slide5 = () => {
-    const patients = [
-        {
-            id: 1,
-            name: "Nguyễn Văn Minh",
-            disease: "Cận thị 6 độ",
-            review:
-                "Sau khi phẫu thuật, thị lực của tôi cải thiện rất rõ rệt. Bác sĩ tư vấn tận tình và quá trình điều trị diễn ra rất nhanh chóng.",
-            image: "https://randomuser.me/api/portraits/men/32.jpg"
-        },
-        {
-            id: 2,
-            name: "Trần Thị Lan",
-            disease: "Loạn thị 3 độ",
-            review:
-                "Tôi rất hài lòng với dịch vụ tại trung tâm. Trang thiết bị hiện đại và đội ngũ bác sĩ rất chuyên nghiệp.",
-            image: "https://randomuser.me/api/portraits/women/44.jpg"
-        },
-        {
-            id: 3,
-            name: "Lê Quốc Bảo",
-            disease: "Cận thị 8 độ",
-            review:
-                "Sau phẫu thuật tôi có thể nhìn rõ mà không cần kính. Trải nghiệm khám và chăm sóc rất tốt.",
-            image: "https://randomuser.me/api/portraits/men/51.jpg"
-        },
-        {
-            id: 4,
-            name: "Phạm Thu Hà",
-            disease: "Cận + loạn thị",
-            review:
-                "Đội ngũ bác sĩ rất tận tâm và chuyên nghiệp. Tôi cảm thấy yên tâm ngay từ lần khám đầu tiên.",
-            image: "https://randomuser.me/api/portraits/women/65.jpg"
-        }
-    ];
+    const navigate = useNavigate();
+    const [patients, setPatients] = useState<Feedback[]>([]);
+    const [activePatient, setActivePatient] = useState<Feedback | null>(null);
+    const [loading, setLoading] = useState(true);
 
-    const [activePatient, setActivePatient] = useState(patients[0]);
+    useEffect(() => {
+        const fetchFeedbacks = async () => {
+            try {
+                const data = await getTopFeedbacks();
+                setPatients(data);
+                if (data && data.length > 0) {
+                    setActivePatient(data[0]);
+                }
+            } catch (error) {
+                console.error("Error fetching feedbacks:", error);
+                // Fallback to empty state if API fails
+                setPatients([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchFeedbacks();
+    }, []);
+
+    if (loading) {
+        return <div style={{ background: "#F5F5F5", padding: "60px 20px" }}>Đang tải...</div>;
+    }
+
+    if (!activePatient) {
+        return <div style={{ background: "#F5F5F5", padding: "60px 20px" }}>Không có dữ liệu đánh giá</div>;
+    }
 
     return (
         <div style={{ background: "#F5F5F5" }}>
@@ -47,21 +55,33 @@ const Slide5 = () => {
                 <div className="review-card">
 
                     <div className="avatar">
-                        <img src={activePatient.image} alt={activePatient.name} />
+                        <img src={activePatient.imageUrl || `https://randomuser.me/api/portraits/men/1.jpg`} alt={activePatient.fullName} />
                     </div>
 
                     <div className="chat-bubble">
 
                         <div className="patient-info">
-                            <h3>{activePatient.name}</h3>
-                            <span>Bệnh: {activePatient.disease}</span>
+                            <h3>{activePatient.fullName}</h3>
+                            <span>Bệnh: {activePatient.sick}</span>
                         </div>
 
-                        <Rate disabled defaultValue={5} />
+                        <Rate disabled defaultValue={activePatient.evaluate} />
 
                         <p className="review-text">
-                            {activePatient.review}
+                            {activePatient.text}
                         </p>
+
+                        {activePatient.createdAt && (
+                            <p style={{ fontSize: "12px", color: "#94a3b8", marginTop: "12px" }}>
+                                {new Date(activePatient.createdAt).toLocaleDateString('vi-VN', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                })}
+                            </p>
+                        )}
 
                     </div>
 
@@ -74,9 +94,16 @@ const Slide5 = () => {
                             className={`thumb ${activePatient.id === p.id ? "active" : ""}`}
                             onClick={() => setActivePatient(p)}
                         >
-                            <img src={p.image} alt={p.name} />
+                            <img src={p.imageUrl || `https://randomuser.me/api/portraits/men/1.jpg`} alt={p.fullName} />
                         </div>
                     ))}
+                    <button
+                        className="feedback-btn"
+                        onClick={() => navigate("/feedback")}
+                        title="Gửi đánh giá"
+                    >
+                        <span className="feedback-icon">⭐</span>
+                    </button>
                 </div>
             </div>
         </div>
