@@ -11,10 +11,19 @@ const Contact = () => {
   const [error, setError] = useState("");
 
   const handleSubmit = async () => {
+    // Kiểm tra các trường bắt buộc không được để trống
     if (!form.name.trim() || !form.gmail.trim() || !form.text.trim()) {
       setError("Vui lòng điền đầy đủ thông tin.");
       return;
     }
+
+    // Kiểm tra email phải là định dạng @gmail.com
+    const gmailRegex = /^[^\s@]+@gmail\.com$/;
+    if (!gmailRegex.test(form.gmail.trim())) {
+      setError("Vui lòng nhập đúng định dạng Gmail (example@gmail.com)");
+      return;
+    }
+
     setError("");
     setLoading(true);
     try {

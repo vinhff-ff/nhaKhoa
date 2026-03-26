@@ -23,6 +23,13 @@ const Register: React.FC<RegisterProps> = ({
       return;
     }
 
+    // Validate Gmail format
+    const gmailRegex = /^[^\s@]+@gmail\.com$/;
+    if (!gmailRegex.test(username)) {
+      message.warning("Vui lòng nhập đúng định dạng Gmail (example@gmail.com)");
+      return;
+    }
+
     if (password !== confirmPassword) {
       message.warning("Mật khẩu không khớp");
       return;
@@ -65,6 +72,7 @@ const Register: React.FC<RegisterProps> = ({
           placeholder="Số điện thoại"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
+          
         />
       </div> */}
       <div className="auth__field">

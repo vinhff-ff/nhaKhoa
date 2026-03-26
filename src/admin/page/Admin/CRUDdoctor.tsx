@@ -86,15 +86,25 @@ const AdminDoctor: React.FC = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
   };
 
   // ─── Thêm bác sĩ ─────────────────────────────────────────
   const handleSave = async () => {
+    // Kiểm tra các trường bắt buộc không được để trống
     if (!form.gmail.trim() || !form.name.trim() || !form.specialized.trim()) {
       message.warning("Vui lòng điền đầy đủ thông tin bắt buộc");
       return;
     }
+
+    // Kiểm tra Gmail phải là định dạng @gmail.com
+    const gmailRegex = /^[^\s@]+@gmail\.com$/;
+    if (!gmailRegex.test(form.gmail.trim())) {
+      message.warning("Vui lòng nhập đúng định dạng Gmail (example@gmail.com)");
+      return;
+    }
+
     try {
       setSaving(true);
       const res = await createDoctor(form);

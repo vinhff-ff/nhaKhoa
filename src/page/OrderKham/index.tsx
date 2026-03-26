@@ -155,6 +155,7 @@ const OrderLichKham = () => {
 
   // Handle form submission
   const handleSubmit = async () => {
+    // Kiểm tra các trường bắt buộc không được để trống
     if (
       !formData.name.trim() ||
       !formData.phone.trim() ||
@@ -166,6 +167,20 @@ const OrderLichKham = () => {
       !formData.note.trim()
     ) {
       message.error("Vui lòng điền đầy đủ tất cả các trường bắt buộc");
+      return;
+    }
+
+    // Kiểm tra số điện thoại phải là số và hợp lệ (Việt Nam)
+    const phoneRegex = /^(0|\+84)(3|5|7|8|9)[0-9]{8}$/;
+    if (!phoneRegex.test(formData.phone.trim())) {
+      message.error("Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam hợp lệ");
+      return;
+    }
+
+    // Kiểm tra gmail phải là định dạng @gmail.com
+    const gmailRegex = /^[^\s@]+@gmail\.com$/;
+    if (!gmailRegex.test(formData.gmail.trim())) {
+      message.error("Vui lòng nhập đúng định dạng Gmail (example@gmail.com)");
       return;
     }
 

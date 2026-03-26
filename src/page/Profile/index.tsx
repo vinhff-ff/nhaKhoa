@@ -123,18 +123,43 @@ const UserProfile: React.FC = () => {
 
   const validate = () => {
     const e: Partial<Profile> = {};
-    if (!form.fullName?.trim()) e.fullName = "Vui lòng nhập họ và tên";
-    if (!form.phone?.trim()) e.phone = "Vui lòng nhập số điện thoại";
-    else if (!/^[0-9\s+\-().]{9,15}$/.test(form.phone.trim())) e.phone = "Số điện thoại không hợp lệ";
+    
+    // Kiểm tra họ và tên không trống
+    if (!form.fullName?.trim()) {
+      e.fullName = "Vui lòng nhập họ và tên";
+    }
+    
+    // Kiểm tra số điện thoại
+    if (!form.phone?.trim()) {
+      e.phone = "Vui lòng nhập số điện thoại";
+    } else {
+      // Kiểm tra định dạng số điện thoại Việt Nam hợp lệ
+      const phoneRegex = /^(0|\+84)(3|5|7|8|9)[0-9]{8}$/;
+      if (!phoneRegex.test(form.phone.trim())) {
+        e.phone = "Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam hợp lệ";
+      }
+    }
 
     if (role === "EMPLOYEE") {
-      if (!form.cccd?.trim()) e.cccd = "Vui lòng nhập CCCD";
-      if (!form.address?.trim()) e.address = "Vui lòng nhập địa chỉ";
+      if (!form.cccd?.trim()) {
+        e.cccd = "Vui lòng nhập CCCD";
+      } else if (!/^\d+$/.test(form.cccd.trim())) {
+        e.cccd = "CCCD phải là số";
+      }
+      if (!form.address?.trim()) {
+        e.address = "Vui lòng nhập địa chỉ";
+      }
     } else if (role === "CUSTOMER") {
-      if (!form.address?.trim()) e.address = "Vui lòng nhập địa chỉ";
+      if (!form.address?.trim()) {
+        e.address = "Vui lòng nhập địa chỉ";
+      }
     } else if (role === "DOCTOR") {
-      if (!form.specialized?.trim()) e.specialized = "Vui lòng nhập chuyên khoa";
-      if (!form.address?.trim()) e.address = "Vui lòng nhập địa chỉ";
+      if (!form.specialized?.trim()) {
+        e.specialized = "Vui lòng nhập chuyên khoa";
+      }
+      if (!form.address?.trim()) {
+        e.address = "Vui lòng nhập địa chỉ";
+      }
     }
 
     setErrors(e);
@@ -200,7 +225,21 @@ const UserProfile: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    
+    // Giới hạn số điện thoại chỉ nhập số
+    if (name === "phone") {
+      const phoneValue = value.replace(/[^\d]/g, "");
+      setForm(prev => ({ ...prev, [name]: phoneValue }));
+    }
+    // Giới hạn CCCD chỉ nhập số
+    else if (name === "cccd") {
+      const cccdValue = value.replace(/[^\d]/g, "");
+      setForm(prev => ({ ...prev, [name]: cccdValue }));
+    }
+    else {
+      setForm(prev => ({ ...prev, [name]: value }));
+    }
+    
     if (errors[name as keyof Profile]) {
       setErrors(prev => ({ ...prev, [name]: undefined }));
     }

@@ -61,9 +61,22 @@ const AdminBanner: React.FC = () => {
   // ─── Validate ─────────────────────────────────────────────
   const validate = () => {
     const e: typeof errors = {};
-    if (!form.title.trim()) e.title = "Vui lòng nhập tiêu đề";
-    if (!form.content.trim()) e.content = "Vui lòng nhập mô tả";
-    if (modalMode === "add" && !form.imgFile) e.imgFile = "Vui lòng chọn ảnh";
+    
+    // Kiểm tra tiêu đề bắt buộc và không được để trống
+    if (!form.title.trim()) {
+      e.title = "Vui lòng nhập tiêu đề";
+    }
+    
+    // Kiểm tra mô tả bắt buộc và không được để trống
+    if (!form.content.trim()) {
+      e.content = "Vui lòng nhập mô tả";
+    }
+    
+    // Kiểm tra ảnh bắt buộc khi thêm mới
+    if (modalMode === "add" && !form.imgFile) {
+      e.imgFile = "Vui lòng chọn ảnh";
+    }
+    
     setErrors(e);
     return Object.keys(e).length === 0;
   };

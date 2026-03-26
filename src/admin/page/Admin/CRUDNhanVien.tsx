@@ -91,10 +91,19 @@ const AdminNhanVien: React.FC = () => {
 
   // ─── Thêm nhân viên ───────────────────────────────────────
   const handleSave = async () => {
+    // Kiểm tra các trường bắt buộc không được để trống
     if (!form.gmail.trim() || !form.name.trim()) {
       message.warning("Vui lòng nhập đầy đủ Họ tên và Gmail");
       return;
     }
+
+    // Kiểm tra Gmail phải là định dạng @gmail.com
+    const gmailRegex = /^[^\s@]+@gmail\.com$/;
+    if (!gmailRegex.test(form.gmail.trim())) {
+      message.warning("Vui lòng nhập đúng định dạng Gmail (example@gmail.com)");
+      return;
+    }
+
     try {
       setSaving(true);
       // Payload gửi đi khớp với định nghĩa hàm createNhanVien của bạn
